@@ -1,20 +1,33 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useProfile } from '../hooks/useProfile';
+import { useProfile } from '../Context/ProfileContext';
+import { registerUser as registerAccount } from '../Services/userServices';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { register } = useProfile();
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    const cleanUsername = username.toLowerCase().replace(/[^a-z0-9_-]/g, '') || 'creator';
-    register(name || 'New Creator', cleanUsername, email);
-    navigate('/');
+    setError(''); setLoading(true);
+    try {
+      const result = await registerAccount({ name, username, email, password });
+
+      localStorage.setItem('linkme_token', result.token);
+      register(name, username.toLowerCase(), email, result.profile);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,7 +63,7 @@ export default function Register() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Alex Rivera"
+                placeholder="Your name"
                 className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-zinc-200 focus:outline-none focus:border-zinc-900 transition"
               />
             </div>
@@ -107,6 +120,8 @@ export default function Register() {
               Create My Link
             </button>
           </form>
+
+          {error && <p role="alert" className="text-xs text-red-600">{error}</p>}
 
           <p className="text-center text-xs text-zinc-500 pt-2">
             Already have a link?{' '}

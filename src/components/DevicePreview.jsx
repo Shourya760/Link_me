@@ -38,7 +38,7 @@ export default function DevicePreview({ profile }) {
   const activeFontStyle = FONT_STYLES.find(f => f.id === profile?.theme?.fontStyle) || FONT_STYLES[0];
   const accentColor = profile?.theme?.accentColor || activeTheme.accentColor;
 
-  const shareUrl = `${window.location.origin}/p/${profile?.username || 'user'}`;
+  const shareUrl = `${window.location.origin}${profile?.username ? `/p/${profile.username}` : '/portfolio'}`;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl);
@@ -228,7 +228,7 @@ export default function DevicePreview({ profile }) {
                     </span>
                   </div>
                   <p className="text-[11px] font-mono text-zinc-400 mt-0.5">
-                    linkme.to/<span className="font-medium">{profile?.username || 'user'}</span>
+                    {profile?.username ? <>linkme.to/<span className="font-medium">{profile.username}</span></> : 'Choose your username'}
                   </p>
 
                   {profile?.title && (

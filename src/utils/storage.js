@@ -144,41 +144,6 @@ export const FONT_STYLES = [
   { id: 'mono', label: 'Tech Monospace', styleClass: 'font-mono' }
 ];
 
-export const AVATAR_PRESETS = [
-  { id: '1', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80', label: 'Minimalist Portrait' },
-  { id: '2', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80', label: 'Friendly Creator' },
-  { id: '3', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80', label: 'Creative Studio' },
-  { id: '4', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80', label: 'Design Lead' },
-  { id: '5', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop&q=80', label: 'Urban Artist' },
-  { id: '6', url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80', label: 'Photographer' },
-  { id: '7', url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80', label: 'Founder & Tech' },
-  { id: '8', url: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80', label: 'Digital Nomad' }
-];
-
-export const PHOTO_PRESETS = [
-  {
-    id: 'p1',
-    title: 'Minimalist Workspace 2024',
-    caption: 'My mechanical keyboard and desk setup in Tokyo',
-    url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80',
-    link: 'https://unsplash.com'
-  },
-  {
-    id: 'p2',
-    title: 'Brand Identity System',
-    caption: 'Design system built for 40,000 active developers',
-    url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&auto=format&fit=crop&q=80',
-    link: 'https://dribbble.com'
-  },
-  {
-    id: 'p3',
-    title: 'Architecture & Shadows',
-    caption: 'Explorations in concrete, light, and geometry',
-    url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&auto=format&fit=crop&q=80',
-    link: 'https://instagram.com'
-  }
-];
-
 export const PLATFORMS = [
   { id: 'x', label: 'X (Twitter)', category: 'social', placeholder: 'handle or @user', prefix: 'x.com/' },
   { id: 'instagram', label: 'Instagram', category: 'social', placeholder: 'username', prefix: 'instagram.com/' },
@@ -198,111 +163,64 @@ export const PLATFORMS = [
   { id: 'facebook', label: 'Facebook', category: 'social', placeholder: 'username', prefix: 'facebook.com/' }
 ];
 
-export const DEFAULT_PROFILE = {
-  name: "Alex Rivera",
-  username: "alex",
-  title: "Product Designer & Frontend Tinkerer",
-  bio: "Designing minimalist interfaces and crafting open-source digital tools. Exploring AI and typography.",
-  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
-  interests: ["UI/UX Design", "React & Vite", "Minimalism", "Typography", "Open Source"],
-  achievements: [
-    { id: "1", title: "Product Hunt #2 Product of the Day", year: "2024" },
-    { id: "2", title: "Built open source UI library with 4k+ stars", year: "2023" },
-    { id: "3", title: "Speaker at Modern Frontend Summit", year: "2023" }
-  ],
-  socials: {
-    instagram: "alexrivera.design",
-    youtube: "@alexrivera_dev",
-    facebook: "",
-    x: "alexrivera_ui",
-    linkedin: "alexrivera-design",
-    github: "alexrivera",
-    tiktok: "",
-    spotify: "",
-    discord: "",
-    twitch: "",
-    whatsapp: "",
-    telegram: "",
-    email: "alex@example.com",
-    website: "https://alexrivera.design",
-    behance: "",
-    dribbble: "alexrivera"
-  },
-  customLinks: [
-    {
-      id: "cl-1",
-      title: "Read My Design Newsletter",
-      url: "https://substack.com",
-      subtitle: "Weekly insights on minimal interfaces & craft",
-      highlight: true,
-      icon: "book"
-    },
-    {
-      id: "cl-2",
-      title: "Book a 1:1 Design Review",
-      url: "https://cal.com",
-      subtitle: "30-min portfolio & UI audit call",
-      highlight: false,
-      icon: "calendar"
-    },
-    {
-      id: "cl-3",
-      title: "Explore My Open Source Kits",
-      url: "https://github.com/alexrivera",
-      subtitle: "Free React & Tailwind CSS component library",
-      highlight: false,
-      icon: "code"
-    }
-  ],
-  photos: PHOTO_PRESETS,
+export const EMPTY_PROFILE = {
+  name: '',
+  username: '',
+  title: '',
+  bio: '',
+  avatar: '',
+  interests: [],
+  achievements: [],
+  socials: {},
+  customLinks: [],
+  photos: [],
   theme: {
     id: 'clean',
-    accentColor: '#18181b',
-    buttonStyle: 'rounded', // 'pill' | 'rounded' | 'square' | 'outline'
-    fontStyle: 'sans',      // 'sans' | 'serif' | 'mono'
-    cardVariant: 'standard' // 'standard' | 'glass' | 'borderless'
+    accentColor: THEMES[0].accentColor,
+    buttonStyle: 'rounded',
+    fontStyle: 'sans',
+    cardVariant: 'standard'
   },
-  email: "alex@example.com",
+  email: '',
   isPublic: true,
-  isAuthenticated: true
+  isAuthenticated: false
 };
 
 const STORAGE_KEY = 'linkme_profile';
 const EVENT_NAME = 'linkme_profile_updated';
 
+export function normalizeProfile(profile = {}) {
+  return {
+    ...EMPTY_PROFILE,
+    ...profile,
+    socials: { ...EMPTY_PROFILE.socials, ...(profile.socials || {}) },
+    theme: { ...EMPTY_PROFILE.theme, ...(profile.theme || {}) },
+    customLinks: Array.isArray(profile.customLinks) ? profile.customLinks : [],
+    photos: Array.isArray(profile.photos) ? profile.photos : [],
+    interests: Array.isArray(profile.interests) ? profile.interests : [],
+    achievements: Array.isArray(profile.achievements) ? profile.achievements : [],
+    isAuthenticated: Boolean(localStorage.getItem('linkme_token'))
+  };
+}
+
 export function getStoredProfile() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return DEFAULT_PROFILE;
-    const parsed = JSON.parse(saved);
-    return {
-      ...DEFAULT_PROFILE,
-      ...parsed,
-      socials: { ...DEFAULT_PROFILE.socials, ...(parsed.socials || {}) },
-      theme: { ...DEFAULT_PROFILE.theme, ...(parsed.theme || {}) },
-      customLinks: Array.isArray(parsed.customLinks) ? parsed.customLinks : DEFAULT_PROFILE.customLinks,
-      photos: Array.isArray(parsed.photos) ? parsed.photos : DEFAULT_PROFILE.photos,
-      interests: Array.isArray(parsed.interests) ? parsed.interests : DEFAULT_PROFILE.interests,
-      achievements: Array.isArray(parsed.achievements) ? parsed.achievements : DEFAULT_PROFILE.achievements
-    };
+    const storedProfile = saved ? JSON.parse(saved) : {};
+    if (storedProfile.isAuthenticated && !localStorage.getItem('linkme_token')) {
+      return normalizeProfile();
+    }
+    return normalizeProfile(storedProfile);
   } catch {
-    return DEFAULT_PROFILE;
+    return normalizeProfile();
   }
 }
 
 export function saveStoredProfile(data) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    window.dispatchEvent(new Event(EVENT_NAME));
-  } catch (err) {
-    console.error('Failed to save profile:', err);
-  }
-}
-
-export function resetStoredProfile() {
-  localStorage.removeItem(STORAGE_KEY);
+  const normalized = normalizeProfile(data);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
   window.dispatchEvent(new Event(EVENT_NAME));
-  return DEFAULT_PROFILE;
+  return normalized;
 }
 
 export { EVENT_NAME };

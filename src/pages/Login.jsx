@@ -1,22 +1,25 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useProfile } from '../hooks/useProfile';
+import { useProfile } from '../Context/ProfileContext';
+import { loginUser as loginAccount } from '../Services/userServices';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useProfile();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email || 'alex@example.com');
-    navigate('/');
-  };
-
-  const handleDemoLogin = () => {
-    login('alex@example.com');
-    navigate('/');
+    setError(''); setLoading(true);
+    try {
+      const result = await loginAccount({ email, password });
+      localStorage.setItem('linkme_token', result.token);
+      login(result.user.email);
+      navigate('/');
+    } catch (err) { setError(err.message); } finally { setLoading(false); }
   };
 
   return (
@@ -84,16 +87,7 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Quick Demo Button */}
-          <div className="pt-2">
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              className="w-full bg-zinc-50 border border-zinc-200 text-zinc-700 py-2 px-4 rounded-xl text-xs font-semibold hover:bg-zinc-100 hover:border-zinc-300 transition"
-            >
-              Demo Sign In (Instant Access)
-            </button>
-          </div>
+          {error && <p role="alert" className="text-xs text-red-600">{error}</p>}
 
           <p className="text-center text-xs text-zinc-500 pt-2">
             Don't have a link yet?{' '}

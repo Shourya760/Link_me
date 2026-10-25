@@ -1,10 +1,11 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
-import { useProfile } from '../hooks/useProfile';
+import { useProfile } from '../Context/ProfileContext';
 
 export default function Navbar() {
   const { profile, logout } = useProfile();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
 
@@ -63,11 +64,11 @@ export default function Navbar() {
                 to="/settings"
                 className="hidden sm:flex items-center gap-2 text-xs font-medium text-zinc-700 bg-zinc-50 py-1 px-2.5 rounded-full border border-zinc-200 hover:border-zinc-300 transition"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className={`w-2 h-2 rounded-full animate-pulse ${profile.isPublic ? 'bg-emerald-500' : 'bg-red-500'}`} />
                 @{profile.username}
               </Link>
               <button
-                onClick={logout}
+                onClick={async () => { await logout(); navigate('/login'); }}
                 className="text-xs text-zinc-500 hover:text-zinc-900 px-2 py-1 transition cursor-pointer"
                 title="Sign out"
               >

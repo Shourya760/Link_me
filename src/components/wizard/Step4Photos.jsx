@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState } from 'react';
 import { 
   Upload, 
   Plus, 
@@ -8,7 +8,7 @@ import {
   ExternalLink,
   Sparkles
 } from 'lucide-react';
-import { PHOTO_PRESETS } from '../../utils/storage';
+import { uploadImage } from '../../Services/userServices';
 
 const SUGGESTED_INTERESTS = [
   "UI/UX Design",
@@ -32,8 +32,6 @@ export default function Step4Photos({
   addAchievement,
   removeAchievement
 }) {
-  const fileInputRef = useRef(null);
-
   // Photo state
   const [photoTitle, setPhotoTitle] = useState('');
   const [photoCaption, setPhotoCaption] = useState('');
@@ -46,7 +44,7 @@ export default function Step4Photos({
   const [newAchTitle, setNewAchTitle] = useState('');
   const [newAchYear, setNewAchYear] = useState('');
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -55,23 +53,20 @@ export default function Step4Photos({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result;
-      if (typeof dataUrl === 'string') {
-        setPhotoPreview(dataUrl);
-      }
-    };
-    reader.readAsDataURL(file);
+    try { const result = await uploadImage(file); setPhotoPreview(result.url); }
+    catch (error) { alert(error.message); }
   };
 
   const handleCreatePhoto = (e) => {
     e.preventDefault();
-    const finalUrl = photoPreview || PHOTO_PRESETS[0].url;
     if (!photoTitle.trim()) return;
+    if (!photoPreview) {
+      alert('Upload an image before adding this portfolio item.');
+      return;
+    }
 
     addPhoto({
-      url: finalUrl,
+      url: photoPreview,
       title: photoTitle.trim(),
       caption: photoCaption.trim(),
       link: photoLink.trim()
@@ -146,41 +141,12 @@ export default function Step4Photos({
               </label>
 
               <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileUpload}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-1.5 bg-white border border-zinc-200 hover:bg-zinc-100 text-zinc-800 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-2xs transition cursor-pointer"
-                >
+                <label className="flex items-center gap-1.5 bg-white border border-zinc-200 hover:bg-zinc-100 text-zinc-800 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-2xs transition cursor-pointer">
+                  <input type="file" onChange={handleFileUpload} accept="image/*" className="sr-only" />
                   <Upload size={13} />
                   <span>Upload Image File</span>
-                </button>
+                </label>
 
-                <span className="text-xs text-zinc-400">or pick a sample:</span>
-
-                {PHOTO_PRESETS.map((preset, idx) => (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => {
-                      setPhotoPreview(preset.url);
-                      if (!photoTitle) setPhotoTitle(preset.title);
-                      if (!photoCaption) setPhotoCaption(preset.caption);
-                    }}
-                    className={`w-7 h-7 rounded-lg overflow-hidden border transition cursor-pointer ${
-                      photoPreview === preset.url ? 'ring-2 ring-zinc-900' : 'border-zinc-200'
-                    }`}
-                    title={preset.title}
-                  >
-                    <img src={preset.url} alt={preset.title} className="w-full h-full object-cover" />
-                  </button>
-                ))}
               </div>
 
               {photoPreview && (

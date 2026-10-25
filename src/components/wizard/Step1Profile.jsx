@@ -1,6 +1,5 @@
-import React, { useRef } from 'react';
 import { Upload, Sparkles, Check, Image as ImageIcon, RefreshCw } from 'lucide-react';
-import { AVATAR_PRESETS } from '../../utils/storage';
+import { uploadImage } from '../../Services/userServices';
 
 const BIO_TEMPLATES = [
   "Designing minimalist interfaces and crafting open-source digital tools. Exploring AI and typography.",
@@ -10,9 +9,7 @@ const BIO_TEMPLATES = [
 ];
 
 export default function Step1Profile({ profile, updateProfile }) {
-  const fileInputRef = useRef(null);
-
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -21,14 +18,8 @@ export default function Step1Profile({ profile, updateProfile }) {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result;
-      if (typeof dataUrl === 'string') {
-        updateProfile({ avatar: dataUrl });
-      }
-    };
-    reader.readAsDataURL(file);
+    try { const result = await uploadImage(file); updateProfile({ avatar: result.url }); }
+    catch (error) { alert(error.message); }
   };
 
   return (
@@ -54,8 +45,8 @@ export default function Step1Profile({ profile, updateProfile }) {
             <input
               type="text"
               value={profile.username || ''}
-              onChange={(e) => updateProfile({ 
-                username: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '') 
+              onChange={(e) => updateProfile({
+                username: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '')
               })}
               placeholder="yourname"
               className="w-full pl-0.5 font-bold text-zinc-900 focus:outline-none bg-transparent"
@@ -93,21 +84,11 @@ export default function Step1Profile({ profile, updateProfile }) {
           {/* Upload and URL Controls */}
           <div className="flex-1 space-y-3 w-full">
             <div className="flex flex-wrap items-center gap-2">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept="image/*"
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-2xs transition cursor-pointer"
-              >
+              <label className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-2xs transition cursor-pointer">
+                <input type="file" onChange={handleFileUpload} accept="image/*" className="sr-only" />
                 <Upload size={14} />
                 <span>Upload From Device</span>
-              </button>
+              </label>
 
               {profile.avatar && (
                 <button
@@ -132,39 +113,6 @@ export default function Step1Profile({ profile, updateProfile }) {
           </div>
         </div>
 
-        {/* Preset Avatars Gallery */}
-        <div className="pt-2 border-t border-zinc-100">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-2">
-            Or choose a curated modern avatar preset:
-          </p>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-            {AVATAR_PRESETS.map((preset) => {
-              const isSelected = profile.avatar === preset.url;
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => updateProfile({ avatar: preset.url })}
-                  className={`relative rounded-full p-0.5 transition hover:scale-105 cursor-pointer ${
-                    isSelected ? 'ring-2 ring-zinc-900' : 'opacity-80 hover:opacity-100'
-                  }`}
-                  title={preset.label}
-                >
-                  <img
-                    src={preset.url}
-                    alt={preset.label}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  {isSelected && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-zinc-900 text-white rounded-full flex items-center justify-center text-[10px]">
-                      ✓
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
       {/* Name and Professional Tagline */}
@@ -178,7 +126,7 @@ export default function Step1Profile({ profile, updateProfile }) {
               type="text"
               value={profile.name || ''}
               onChange={(e) => updateProfile({ name: e.target.value })}
-              placeholder="e.g. Alex Rivera"
+              placeholder="Your name"
               className="w-full px-3.5 py-2 text-sm rounded-xl border border-zinc-200 focus:outline-none focus:border-zinc-900 transition"
             />
           </div>
@@ -191,7 +139,7 @@ export default function Step1Profile({ profile, updateProfile }) {
               type="text"
               value={profile.title || ''}
               onChange={(e) => updateProfile({ title: e.target.value })}
-              placeholder="e.g. Product Designer & Builder"
+              placeholder="Your title"
               className="w-full px-3.5 py-2 text-sm rounded-xl border border-zinc-200 focus:outline-none focus:border-zinc-900 transition"
             />
           </div>

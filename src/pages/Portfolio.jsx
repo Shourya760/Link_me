@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { 
-  Check, 
-  Copy, 
-  ExternalLink, 
-  ArrowLeft, 
-  Star, 
-  QrCode, 
-  Share2, 
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  ArrowLeft,
+  Star,
+  QrCode,
+  Share2,
   Download,
   BookOpen,
   Calendar,
@@ -22,8 +22,9 @@ import {
   FaGlobe, FaBehance, FaDribbble
 } from 'react-icons/fa';
 import { FaXTwitter, FaShareNodes } from 'react-icons/fa6';
-import { useProfile } from '../hooks/useProfile';
+import { useProfile } from '../Context/ProfileContext';
 import { THEMES, BUTTON_STYLES, FONT_STYLES, PLATFORMS } from '../utils/storage';
+import { getPublicProfile } from '../Services/profileServices';
 
 const SOCIAL_ICONS = {
   instagram: FaInstagram, youtube: FaYoutube, facebook: FaFacebook,
@@ -35,13 +36,32 @@ const SOCIAL_ICONS = {
 
 export default function Portfolio() {
   const { username } = useParams();
-  const { profile } = useProfile();
+  const { profile: localProfile } = useProfile();
+  const [remoteProfile, setRemoteProfile] = useState(null);
+  const [publicProfileError, setPublicProfileError] = useState('');
+  const profile = remoteProfile || localProfile;
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [selectedPhotoModal, setSelectedPhotoModal] = useState(null);
 
-  const isOwner = !username || username.toLowerCase() === profile.username?.toLowerCase();
-  const shareUrl = `${window.location.origin}/p/${profile.username || 'user'}`;
+  useEffect(() => {
+    if (!username || username.toLowerCase() === localProfile.username?.toLowerCase()) {
+      setRemoteProfile(null);
+      setPublicProfileError('');
+      return;
+    }
+    let cancelled = false;
+    getPublicProfile(username)
+      .then(({ profile: fetchedProfile }) => { if (!cancelled) setRemoteProfile(fetchedProfile); })
+      .catch((error) => { if (!cancelled) setPublicProfileError(error.message); });
+    return () => { cancelled = true; };
+  }, [username, localProfile.username]);
+
+  const isOwner = Boolean(
+    localProfile.isAuthenticated &&
+    (!username || username.toLowerCase() === localProfile.username?.toLowerCase())
+  );
+  const shareUrl = `${window.location.origin}${profile.username ? `/p/${profile.username}` : '/portfolio'}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {
@@ -54,6 +74,8 @@ export default function Portfolio() {
   const activeButtonStyle = BUTTON_STYLES.find(b => b.id === profile?.theme?.buttonStyle) || BUTTON_STYLES[1];
   const activeFontStyle = FONT_STYLES.find(f => f.id === profile?.theme?.fontStyle) || FONT_STYLES[0];
   const accentColor = profile?.theme?.accentColor || activeTheme.accentColor;
+
+  if (publicProfileError) return <main className="min-h-screen grid place-items-center p-6 text-center"><div><h1 className="text-xl font-bold">Profile unavailable</h1><p className="text-sm text-zinc-500 mt-2">{publicProfileError}</p><Link to="/" className="inline-block mt-4 underline">Go home</Link></div></main>;
 
   // Active socials
   const activeSocials = PLATFORMS.filter(p => profile?.socials?.[p.id]?.trim());
@@ -99,16 +121,18 @@ export default function Portfolio() {
 
   return (
     <div className={`min-h-screen ${activeTheme.pageBg} ${activeFontStyle.styleClass} py-8 px-4 sm:px-6 flex flex-col justify-between transition-colors duration-300`}>
-      
+
       {/* Top Floating Controls */}
       <div className="max-w-2xl w-full mx-auto flex items-center justify-between mb-8">
-        <Link 
-          to="/" 
-          className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-xs border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 hover:bg-white flex items-center gap-1.5 transition shadow-2xs"
-        >
-          <ArrowLeft size={14} />
-          <span>Edit Profile</span>
-        </Link>
+        {isOwner ? (
+          <Link
+            to="/"
+            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-xs border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 hover:bg-white flex items-center gap-1.5 transition shadow-2xs"
+          >
+            <ArrowLeft size={14} />
+            <span>Edit Profile</span>
+          </Link>
+        ) : null}
 
         <div className="flex items-center gap-2">
           <button
@@ -143,7 +167,7 @@ export default function Portfolio() {
 
       {/* Main Portfolio Container Card */}
       <main className={`max-w-xl w-full mx-auto ${activeTheme.cardBg} ${activeTheme.cardBorder} ${activeTheme.cardShadow} border rounded-3xl p-6 sm:p-10 shadow-lg space-y-8 transition-all duration-300`}>
-        
+
         {/* Profile Header */}
         <div className="text-center space-y-3">
           <div className="relative inline-block">
@@ -154,16 +178,16 @@ export default function Portfolio() {
                 className="w-24 h-24 rounded-full object-cover mx-auto ring-4 ring-black/5 border-2 border-white shadow-sm"
               />
             ) : (
-              <div 
+              <div
                 className="w-24 h-24 rounded-full text-white text-3xl font-bold flex items-center justify-center mx-auto shadow-sm"
                 style={{ backgroundColor: accentColor }}
               >
                 {profile.name?.charAt(0) || 'U'}
               </div>
             )}
-            <span 
-              className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-2xs" 
-              title="Active Creator" 
+            <span
+              className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-2xs"
+              title="Active Creator"
             />
           </div>
 
@@ -172,7 +196,7 @@ export default function Portfolio() {
               <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight ${activeTheme.textColor}`}>
                 {profile.name || 'Your Name'}
               </h1>
-              <span 
+              <span
                 className="text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5 shadow-2xs"
                 style={{ backgroundColor: `${accentColor}18`, color: accentColor }}
                 title="Verified Creator"
@@ -182,7 +206,7 @@ export default function Portfolio() {
             </div>
 
             <p className="text-xs font-mono text-zinc-400 mt-1">
-              linkme.to/{profile.username || 'user'}
+              {profile.username ? `linkme.to/${profile.username}` : 'Choose your username'}
             </p>
 
             {profile.title && (
@@ -235,19 +259,17 @@ export default function Portfolio() {
                   href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block w-full p-3.5 text-left transition duration-200 group relative border shadow-2xs hover:scale-[1.01] active:scale-[0.99] ${
-                    isPill ? 'rounded-full px-5' : isSquare ? 'rounded-lg' : isOutline ? 'rounded-2xl border-2' : 'rounded-2xl'
-                  } ${
-                    link.highlight 
-                      ? 'ring-2 ring-amber-400/60 shadow-md' 
+                  className={`block w-full p-3.5 text-left transition duration-200 group relative border shadow-2xs hover:scale-[1.01] active:scale-[0.99] ${isPill ? 'rounded-full px-5' : isSquare ? 'rounded-lg' : isOutline ? 'rounded-2xl border-2' : 'rounded-2xl'
+                    } ${link.highlight
+                      ? 'ring-2 ring-amber-400/60 shadow-md'
                       : ''
-                  } ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
+                    } ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div 
+                      <div
                         className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition"
-                        style={{ 
+                        style={{
                           backgroundColor: link.highlight ? accentColor : `${accentColor}15`,
                           color: link.highlight ? '#ffffff' : accentColor
                         }}
@@ -366,8 +388,8 @@ export default function Portfolio() {
 
       {/* Footer Branding */}
       <footer className="text-center py-8">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-700 transition"
         >
           <span>Powered by</span>
@@ -377,97 +399,101 @@ export default function Portfolio() {
       </footer>
 
       {/* QR Code Modal */}
-      {showQrModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-sm w-full text-center space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold text-zinc-900">QR Code for @{profile.username}</h4>
-              <button
-                type="button"
-                onClick={() => setShowQrModal(false)}
-                className="text-zinc-400 hover:text-zinc-700 text-lg font-bold p-1 cursor-pointer"
-              >
-                ×
-              </button>
-            </div>
-
-            <p className="text-xs text-zinc-500">
-              Scan with camera to open {profile.name}'s linkme profile.
-            </p>
-
-            <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex justify-center">
-              <img
-                src={qrCodeUrl}
-                alt="QR Code"
-                className="w-48 h-48 rounded-xl shadow-xs"
-              />
-            </div>
-
-            <p className="text-xs font-mono font-medium text-zinc-600">
-              linkme.to/{profile.username}
-            </p>
-
-            <div className="flex gap-2 pt-2">
-              <a
-                href={qrCodeUrl}
-                download={`linkme-${profile.username}-qr.png`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5"
-              >
-                <Download size={14} />
-                <span>Save Image</span>
-              </a>
-              <button
-                type="button"
-                onClick={() => setShowQrModal(false)}
-                className="px-4 py-2 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-xl text-xs font-semibold transition cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photo Lightbox Modal */}
-      {selectedPhotoModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedPhotoModal(null)}>
-          <div className="bg-white rounded-3xl overflow-hidden max-w-lg w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="aspect-4/3 w-full bg-zinc-950 overflow-hidden">
-              <img src={selectedPhotoModal.url} alt={selectedPhotoModal.title} className="w-full h-full object-contain" />
-            </div>
-            <div className="p-5 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-zinc-900">{selectedPhotoModal.title}</h3>
-                {selectedPhotoModal.caption && (
-                  <p className="text-xs text-zinc-500 mt-0.5">{selectedPhotoModal.caption}</p>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {selectedPhotoModal.link && (
-                  <a
-                    href={selectedPhotoModal.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition text-xs font-semibold flex items-center gap-1"
-                  >
-                    <span>Visit Link</span>
-                    <ExternalLink size={12} />
-                  </a>
-                )}
+      {
+        showQrModal && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-sm w-full text-center space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-bold text-zinc-900">QR Code for @{profile.username}</h4>
                 <button
                   type="button"
-                  onClick={() => setSelectedPhotoModal(null)}
-                  className="px-3 py-1.5 border border-zinc-200 rounded-xl text-xs font-semibold text-zinc-700 hover:bg-zinc-100 transition"
+                  onClick={() => setShowQrModal(false)}
+                  className="text-zinc-400 hover:text-zinc-700 text-lg font-bold p-1 cursor-pointer"
+                >
+                  ×
+                </button>
+              </div>
+
+              <p className="text-xs text-zinc-500">
+                Scan with camera to open {profile.name}'s linkme profile.
+              </p>
+
+              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex justify-center">
+                <img
+                  src={qrCodeUrl}
+                  alt="QR Code"
+                  className="w-48 h-48 rounded-xl shadow-xs"
+                />
+              </div>
+
+              <p className="text-xs font-mono font-medium text-zinc-600">
+                linkme.to/{profile.username}
+              </p>
+
+              <div className="flex gap-2 pt-2">
+                <a
+                  href={qrCodeUrl}
+                  download={`linkme-${profile.username}-qr.png`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5"
+                >
+                  <Download size={14} />
+                  <span>Save Image</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowQrModal(false)}
+                  className="px-4 py-2 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-xl text-xs font-semibold transition cursor-pointer"
                 >
                   Close
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+
+      {/* Photo Lightbox Modal */}
+      {
+        selectedPhotoModal && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedPhotoModal(null)}>
+            <div className="bg-white rounded-3xl overflow-hidden max-w-lg w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="aspect-4/3 w-full bg-zinc-950 overflow-hidden">
+                <img src={selectedPhotoModal.url} alt={selectedPhotoModal.title} className="w-full h-full object-contain" />
+              </div>
+              <div className="p-5 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-900">{selectedPhotoModal.title}</h3>
+                  {selectedPhotoModal.caption && (
+                    <p className="text-xs text-zinc-500 mt-0.5">{selectedPhotoModal.caption}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {selectedPhotoModal.link && (
+                    <a
+                      href={selectedPhotoModal.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition text-xs font-semibold flex items-center gap-1"
+                    >
+                      <span>Visit Link</span>
+                      <ExternalLink size={12} />
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPhotoModal(null)}
+                    className="px-3 py-1.5 border border-zinc-200 rounded-xl text-xs font-semibold text-zinc-700 hover:bg-zinc-100 transition"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div >
   );
 }

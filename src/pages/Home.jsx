@@ -9,19 +9,22 @@ import {
   Eye,
   RotateCcw
 } from 'lucide-react';
-import { useProfile } from '../hooks/useProfile';
-import Navbar from '../components/Navbar';
-import StepperHeader, { WIZARD_STEPS } from '../components/wizard/StepperHeader';
-import Step1Profile from '../components/wizard/Step1Profile';
-import Step2Links from '../components/wizard/Step2Links';
-import Step3Design from '../components/wizard/Step3Design';
-import Step4Photos from '../components/wizard/Step4Photos';
-import Step5Publish from '../components/wizard/Step5Publish';
-import DevicePreview from '../components/DevicePreview';
+import { useProfile } from '../Context/ProfileContext';
+import Navbar from '../Components/Navbar';
+import StepperHeader, { WIZARD_STEPS } from '../Components/wizard/StepperHeader';
+import Step1Profile from '../Components/wizard/Step1Profile';
+import Step2Links from '../Components/wizard/Step2Links';
+import Step3Design from '../Components/wizard/Step3Design';
+import Step4Photos from '../Components/wizard/Step4Photos';
+import Step5Publish from '../Components/wizard/Step5Publish';
+import DevicePreview from '../Components/DevicePreview';
 
 export default function Home() {
   const {
     profile,
+    loading,
+    saving,
+    saveProfile,
     updateProfile,
     updateTheme,
     updateSocial,
@@ -42,8 +45,9 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState(1);
   const [mobileViewTab, setMobileViewTab] = useState('editor'); // 'editor' | 'preview'
   const [copied, setCopied] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
-  const shareUrl = `${window.location.origin}/p/${profile.username || 'user'}`;
+  const shareUrl = `${window.location.origin}${profile.username ? `/p/${profile.username}` : '/portfolio'}`;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl);
@@ -51,10 +55,15 @@ export default function Home() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleNext = () => {
-    if (currentStep < WIZARD_STEPS.length) {
-      setCurrentStep(prev => prev + 1);
+  const handleNext = async () => {
+    if (currentStep >= WIZARD_STEPS.length) return;
+    setSaveError('');
+    try {
+      await saveProfile();
+      setCurrentStep((step) => step + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      setSaveError(error.message || 'Could not save your profile. Please try again.');
     }
   };
 
@@ -66,7 +75,7 @@ export default function Home() {
   };
 
   const handleReset = () => {
-    if (window.confirm("Reset all settings and data back to defaults?")) {
+    if (window.confirm("Clear your profile content? Your username and email will stay.")) {
       resetToDefault();
       setCurrentStep(1);
     }
@@ -82,13 +91,13 @@ export default function Home() {
         <section className="bg-white border border-zinc-200/90 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className={`w-2 h-2 rounded-full animate-pulse ${profile.isPublic ? 'bg-emerald-500' : 'bg-red-500'}`} />
               <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
                 Step-by-Step Bio Link Builder
               </span>
             </div>
             <p className="text-sm font-semibold text-zinc-900 flex items-center gap-1 font-mono">
-              linkme.to/<span className="text-zinc-600">{profile.username || 'user'}</span>
+              {profile.username ? <>linkme.to/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
             </p>
           </div>
 
@@ -111,7 +120,7 @@ export default function Home() {
               )}
             </button>
             <Link
-              to={`/p/${profile.username || 'user'}`}
+              to={profile.username ? `/p/${profile.username}` : '/portfolio'}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-900 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-zinc-800 transition shadow-2xs"
@@ -223,10 +232,10 @@ export default function Home() {
                     type="button"
                     onClick={handleReset}
                     className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-red-600 transition cursor-pointer px-2 py-1"
-                    title="Reset to default template"
+                    title="Clear profile content"
                   >
                     <RotateCcw size={13} />
-                    <span>Reset Defaults</span>
+                    <span>Clear Content</span>
                   </button>
                 )}
               </div>
@@ -236,14 +245,15 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={handleNext}
+                    disabled={loading || saving}
                     className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
                   >
-                    <span>Next: {WIZARD_STEPS[currentStep]?.title}</span>
+                    <span>{saving ? 'Saving…' : loading ? 'Loading…' : `Next: ${WIZARD_STEPS[currentStep]?.title}`}</span>
                     <ChevronRight size={16} />
                   </button>
                 ) : (
                   <Link
-                    to={`/p/${profile.username || 'user'}`}
+                    to={profile.username ? `/p/${profile.username}` : '/portfolio'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs active:scale-95"
@@ -254,6 +264,7 @@ export default function Home() {
                 )}
               </div>
             </div>
+            {saveError && <p role="alert" className="text-sm text-red-600">{saveError}</p>}
 
           </div>
 

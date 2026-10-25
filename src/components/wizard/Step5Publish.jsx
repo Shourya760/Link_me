@@ -18,7 +18,7 @@ export default function Step5Publish({ profile }) {
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
 
-  const shareUrl = `${window.location.origin}/p/${profile.username || 'user'}`;
+  const shareUrl = `${window.location.origin}${profile.username ? `/p/${profile.username}` : '/portfolio'}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {
@@ -58,8 +58,8 @@ export default function Step5Publish({ profile }) {
       <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 text-white rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            Live & Public
+            <span className={`w-2 h-2 rounded-full animate-pulse ${profile.isPublic ? 'bg-emerald-400' : 'bg-red-400'}`} />
+            {profile.isPublic ? 'Public profile' : 'Private profile'}
           </span>
           <span className="text-xs font-semibold bg-white/10 px-2.5 py-0.5 rounded-full text-zinc-200">
             {activeTheme.name}
@@ -71,7 +71,7 @@ export default function Step5Publish({ profile }) {
           <div className="text-lg sm:text-2xl font-bold font-mono tracking-tight text-white flex items-center gap-1 flex-wrap">
             <span>linkme.to/</span>
             <span className="text-emerald-400 underline decoration-emerald-500/50 underline-offset-4">
-              {profile.username || 'user'}
+              {profile.username || 'Choose a username'}
             </span>
           </div>
         </div>

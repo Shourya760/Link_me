@@ -1,40 +1,54 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { useProfile } from '../hooks/useProfile';
-import Navbar from '../components/Navbar';
+import { useProfile } from '../Context/ProfileContext';
+import Navbar from '../Components/Navbar';
+import { updateMyProfile } from '../Services/profileServices';
 
 export default function Settings() {
   const { profile, updateProfile, resetToDefault, logout } = useProfile();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState(profile.email || 'alex@example.com');
-  const [username, setUsername] = useState(profile.username || 'alex');
+  const [email, setEmail] = useState(profile.email || '');
+  const [username, setUsername] = useState(profile.username || '');
   const [isPublic, setIsPublic] = useState(profile.isPublic ?? true);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = (e) => {
+  useEffect(() => {
+    setEmail(profile.email || '');
+    setUsername(profile.username || '');
+    setIsPublic(profile.isPublic ?? true);
+  }, [profile.email, profile.username, profile.isPublic]);
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    updateProfile({
-      email,
-      username: username.toLowerCase().replace(/[^a-z0-9_-]/g, ''),
-      isPublic
-    });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setSaving(true);
+    setError('');
+    setSaved(false);
+    const changes = { email, username: username.toLowerCase().replace(/[^a-z0-9_-]/g, ''), isPublic };
+    try {
+      const { profile: savedProfile } = await updateMyProfile(changes);
+      updateProfile(savedProfile);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (saveError) {
+      setError(saveError.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleReset = () => {
-    if (window.confirm('Reset all profile details to sample data?')) {
+    if (window.confirm('Clear your profile content? Your username and email will stay.')) {
       resetToDefault();
-      setEmail('alex@example.com');
-      setUsername('alex');
       setIsPublic(true);
     }
   };
 
-  const handleSignOut = () => {
-    logout();
+  const handleSignOut = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -51,27 +65,6 @@ export default function Settings() {
             Manage your linkme URL, account preferences, and public visibility
           </p>
         </div>
-
-        {/* Analytics Card */}
-        <section className="bg-zinc-50 border border-zinc-200/80 rounded-2xl p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
-            Quick Stats
-          </h2>
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="bg-white p-3 rounded-xl border border-zinc-200/80">
-              <p className="text-lg font-bold text-zinc-900 font-mono">1,420</p>
-              <p className="text-[11px] text-zinc-500">Page Views</p>
-            </div>
-            <div className="bg-white p-3 rounded-xl border border-zinc-200/80">
-              <p className="text-lg font-bold text-zinc-900 font-mono">428</p>
-              <p className="text-[11px] text-zinc-500">Link Clicks</p>
-            </div>
-            <div className="bg-white p-3 rounded-xl border border-zinc-200/80">
-              <p className="text-lg font-bold text-emerald-600 font-mono">30.1%</p>
-              <p className="text-[11px] text-zinc-500">Click Rate</p>
-            </div>
-          </div>
-        </section>
 
         {/* Account Details Form */}
         <section className="bg-white border border-zinc-200/90 rounded-2xl p-6 space-y-5">
@@ -133,6 +126,7 @@ export default function Settings() {
             <div className="flex items-center justify-between pt-2">
               <button
                 type="submit"
+                disabled={saving}
                 className="bg-zinc-900 text-white px-5 py-2 rounded-xl text-xs font-medium hover:bg-zinc-800 transition flex items-center gap-1.5 cursor-pointer"
               >
                 {saved ? (
@@ -141,7 +135,7 @@ export default function Settings() {
                     <span>Saved Changes</span>
                   </>
                 ) : (
-                  <span>Save Settings</span>
+                  <span>{saving ? 'Saving…' : 'Save Settings'}</span>
                 )}
               </button>
 
@@ -152,6 +146,7 @@ export default function Settings() {
               )}
             </div>
           </form>
+          {error && <p role="alert" className="text-xs text-red-600">{error}</p>}
         </section>
 
         {/* Danger Zone */}
@@ -160,7 +155,7 @@ export default function Settings() {
             Account Management
           </h2>
           <p className="text-xs text-zinc-500">
-            Resetting clears changes and reloads the default sample profile data.
+            Clear profile content while keeping your account details.
           </p>
 
           <div className="flex flex-wrap gap-3 pt-1">
@@ -168,7 +163,7 @@ export default function Settings() {
               onClick={handleReset}
               className="px-3.5 py-2 rounded-xl text-xs font-medium text-zinc-700 border border-zinc-200 hover:bg-zinc-50 transition cursor-pointer"
             >
-              Reset to Default Demo Data
+              Clear Profile Content
             </button>
             <button
               onClick={handleSignOut}
