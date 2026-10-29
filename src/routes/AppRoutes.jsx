@@ -12,7 +12,6 @@ export default function AppRoutes() {
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/p/:username" element={<Portfolio />} />
             <Route element={<ProtectedLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/settings" element={<Settings />} />
