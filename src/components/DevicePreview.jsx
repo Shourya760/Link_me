@@ -179,7 +179,7 @@ export default function DevicePreview({ profile }) {
 
                   <p className="text-[10px] text-zinc-400 font-mono mt-0.5">
                     {profile?.username
-                      ? `linkme.to/${profile.username}`
+                      ? `linkme-k4qb.onrender.com/${profile.username}`
                       : "Choose your username"}
                   </p>
 

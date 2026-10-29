@@ -18,6 +18,7 @@ export default function AppRoutes() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/portfolio" element={<Portfolio />} />
             </Route>
+            <Route path="/:username" element={<Portfolio />} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

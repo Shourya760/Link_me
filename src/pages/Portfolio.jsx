@@ -61,7 +61,7 @@ export default function Portfolio() {
     localProfile.isAuthenticated &&
     (!username || username.toLowerCase() === localProfile.username?.toLowerCase())
   );
-  const shareUrl = `${window.location.origin}${profile.username ? `/p/${profile.username}` : '/portfolio'}`;
+  const shareUrl = `${window.location.origin}${profile.username ? `/${profile.username}` : '/portfolio'}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {
@@ -206,7 +206,7 @@ export default function Portfolio() {
             </div>
 
             <p className="text-xs font-mono text-zinc-400 mt-1">
-              {profile.username ? `linkme.to/${profile.username}` : 'Choose your username'}
+              {profile.username ? `linkme-k4qb.onrender.com/${profile.username}` : 'Choose your username'}
             </p>
 
             {profile.title && (
@@ -434,7 +434,7 @@ export default function Portfolio() {
               </div>
 
               <p className="text-xs font-mono font-medium text-zinc-600">
-                linkme.to/{profile.username}
+                linkme-k4qb.onrender.com/{profile.username}
               </p>
 
               <div className="flex gap-2 pt-2">

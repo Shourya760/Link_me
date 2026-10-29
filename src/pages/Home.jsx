@@ -47,7 +47,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [saveError, setSaveError] = useState('');
 
-  const shareUrl = `${window.location.origin}${profile.username ? `/p/${profile.username}` : '/portfolio'}`;
+  const shareUrl = `${window.location.origin}${profile.username ? `/${profile.username}` : '/portfolio'}`;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl);
@@ -126,7 +126,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-zinc-900 flex items-center gap-1 font-mono">
-                  {profile.username ? <>linkme.to/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
+                  {profile.username ? <>linkme-k4qb.onrender.com/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
                 </p>
               </div>
 

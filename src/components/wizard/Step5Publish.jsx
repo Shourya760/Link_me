@@ -16,7 +16,7 @@ export default function Step5Publish({ profile }) {
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
 
-  const shareUrl = `${window.location.origin}${profile.username ? `/p/${profile.username}` : '/portfolio'}`;
+  const shareUrl = `${window.location.origin}${profile.username ? `/${profile.username}` : '/portfolio'}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {
@@ -67,7 +67,7 @@ export default function Step5Publish({ profile }) {
         <div>
           <p className="text-xs text-zinc-400 mb-1">Your Unique Portfolio URL</p>
           <div className="text-lg sm:text-2xl font-bold font-mono tracking-tight text-white flex items-center gap-1 flex-wrap">
-            <span>linkme.to/</span>
+            <span>linkme-k4qb.onrender.com/</span>
             <span className="text-emerald-400 underline decoration-emerald-500/50 underline-offset-4">
               {profile.username || 'Choose a username'}
             </span>
@@ -239,7 +239,7 @@ export default function Step5Publish({ profile }) {
             </div>
 
             <p className="text-xs font-mono font-medium text-zinc-600">
-              linkme.to/{profile.username}
+              linkme-k4qb.onrender.com/{profile.username}
             </p>
 
             <div className="flex gap-2 pt-2">

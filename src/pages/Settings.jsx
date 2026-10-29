@@ -78,7 +78,7 @@ export default function Settings() {
                 Your Public Portfolio Link
               </label>
               <div className="flex items-center rounded-xl border border-zinc-200 focus-within:border-zinc-900 px-3.5 py-2 text-sm bg-zinc-50">
-                <span className="text-zinc-400 select-none">linkme.to/</span>
+                <span className="text-zinc-400 select-none">linkme-k4qb.onrender.com/</span>
                 <input
                   type="text"
                   value={username}
