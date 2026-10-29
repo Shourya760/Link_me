@@ -18,6 +18,7 @@ import Step3Design from '../components/wizard/Step3Design';
 import Step4Photos from '../components/wizard/Step4Photos';
 import Step5Publish from '../components/wizard/Step5Publish';
 import DevicePreview from '../components/DevicePreview';
+import { getPortfolioUrl } from '../utils/portfolioUrl';
 
 export default function Home() {
   const {
@@ -47,7 +48,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [saveError, setSaveError] = useState('');
 
-  const shareUrl = `${window.location.origin}${profile.username ? `/${profile.username}` : '/portfolio'}`;
+  const shareUrl = getPortfolioUrl(profile.username);
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl);
@@ -148,15 +149,15 @@ export default function Home() {
                     </>
                   )}
                 </button>
-                <Link
-                  to={profile.username ? `/p/${profile.username}` : '/portfolio'}
+                <a
+                  href={shareUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-900 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-zinc-800 transition shadow-2xs"
                 >
                   <span>View Portfolio</span>
                   <ExternalLink size={13} className="text-zinc-400" />
-                </Link>
+                </a>
               </div>
             </section>
 
@@ -252,15 +253,15 @@ export default function Home() {
                     <ChevronRight size={16} />
                   </button>
                 ) : (
-                  <Link
-                    to={profile.username ? `/p/${profile.username}` : '/portfolio'}
+                  <a
+                    href={shareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs active:scale-95"
                   >
                     <span>Launch Live Portfolio</span>
                     <ExternalLink size={14} />
-                  </Link>
+                  </a>
                 )}
               </div>
             </div>

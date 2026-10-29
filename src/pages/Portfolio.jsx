@@ -25,6 +25,7 @@ import { FaXTwitter, FaShareNodes } from 'react-icons/fa6';
 import { useProfile } from '../Context/ProfileContext';
 import { THEMES, BUTTON_STYLES, FONT_STYLES, PLATFORMS } from '../utils/storage';
 import { getPublicProfile } from '../Services/profileServices';
+import { getPortfolioUrl } from '../utils/portfolioUrl';
 
 const SOCIAL_ICONS = {
   instagram: FaInstagram, youtube: FaYoutube, facebook: FaFacebook,
@@ -61,7 +62,7 @@ export default function Portfolio() {
     localProfile.isAuthenticated &&
     (!username || username.toLowerCase() === localProfile.username?.toLowerCase())
   );
-  const shareUrl = `${window.location.origin}${profile.username ? `/${profile.username}` : '/portfolio'}`;
+  const shareUrl = getPortfolioUrl(profile.username);
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {

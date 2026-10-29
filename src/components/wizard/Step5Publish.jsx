@@ -11,12 +11,13 @@ import {
 import { FaWhatsapp, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { THEMES } from '../../utils/storage';
+import { getPortfolioUrl } from '../../utils/portfolioUrl';
 
 export default function Step5Publish({ profile }) {
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
 
-  const shareUrl = `${window.location.origin}${profile.username ? `/${profile.username}` : '/portfolio'}`;
+  const shareUrl = getPortfolioUrl(profile.username);
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {

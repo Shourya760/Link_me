@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { useProfile } from '../Context/ProfileContext';
+import { getPortfolioUrl } from '../utils/portfolioUrl';
 
 export default function Navbar() {
   const { profile, logout } = useProfile();
@@ -46,15 +47,15 @@ export default function Navbar() {
             Settings
           </Link>
           
-          <Link
-            to={`/p/${profile.username || 'preview'}`}
+          <a
+            href={getPortfolioUrl(profile.username)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-zinc-700 bg-zinc-50 border border-zinc-200/80 hover:bg-zinc-100 transition"
           >
             <span>My Portfolio</span>
             <ExternalLink size={14} className="text-zinc-400" />
-          </Link>
+          </a>
 
           <div className="h-4 w-px bg-zinc-200 mx-1 hidden sm:block" />
 
