@@ -16,11 +16,14 @@ export default function Login() {
     setError(''); setLoading(true);
     try {
       const result = await loginAccount({ email, password });
+      if (!result?.token || !result?.user?.email) {
+        throw new Error(result?.message || 'The server returned an incomplete login response.');
+      }
       localStorage.setItem('linkme_token', result.token);
       login(result.user.email);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || err.message || 'Unable to sign in. Please try again.');
     }
     finally {
       setLoading(false);
