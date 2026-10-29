@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedLayout from '../Layout/ProtectedLayout.jsx';
-import Login from '../pages/Login.jsx';
-import Register from '../pages/Register.jsx';
-import Portfolio from '../pages/Portfolio.jsx';
-import Home from '../pages/Home';
-import Settings from '../pages/Settings.jsx';
+import Login from '../Pages/Login.jsx';
+import Register from '../Pages/Register.jsx';
+import Portfolio from '../Pages/Portfolio.jsx';
+import Home from '../Pages/Home.jsx';
+import Settings from '../Pages/Settings.jsx';
 
 
 export default function AppRoutes() {
@@ -17,6 +17,7 @@ export default function AppRoutes() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/portfolio" element={<Portfolio />} />
             </Route>
+            <Route path="/p/:username" element={<Portfolio />} />
             <Route path="/:username" element={<Portfolio />} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
