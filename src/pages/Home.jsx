@@ -10,14 +10,14 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { useProfile } from '../Context/ProfileContext';
-import Navbar from '../Components/Navbar';
-import StepperHeader, { WIZARD_STEPS } from '../Components/wizard/StepperHeader';
-import Step1Profile from '../Components/wizard/Step1Profile';
-import Step2Links from '../Components/wizard/Step2Links';
-import Step3Design from '../Components/wizard/Step3Design';
-import Step4Photos from '../Components/wizard/Step4Photos';
-import Step5Publish from '../Components/wizard/Step5Publish';
-import DevicePreview from '../Components/DevicePreview';
+import Navbar from '../components/Navbar';
+import StepperHeader, { WIZARD_STEPS } from '../components/wizard/StepperHeader';
+import Step1Profile from '../components/wizard/Step1Profile';
+import Step2Links from '../components/wizard/Step2Links';
+import Step3Design from '../components/wizard/Step3Design';
+import Step4Photos from '../components/wizard/Step4Photos';
+import Step5Publish from '../components/wizard/Step5Publish';
+import DevicePreview from '../components/DevicePreview';
 
 export default function Home() {
   const {

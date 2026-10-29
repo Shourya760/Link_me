@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useProfile } from '../Context/ProfileContext';
-import Navbar from '../Components/Navbar';
+import Navbar from '../components/Navbar';
 import { updateMyProfile } from '../Services/profileServices';
 
 export default function Settings() {
