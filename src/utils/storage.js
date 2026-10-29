@@ -1,4 +1,5 @@
 export const THEMES = [
+  // 1. Keep Clean Minimal unchanged
   {
     id: 'clean',
     name: 'Clean Minimal',
@@ -9,64 +10,76 @@ export const THEMES = [
     cardShadow: 'shadow-xs',
     textColor: 'text-zinc-900',
     textMuted: 'text-zinc-500',
-    accentColor: '#18181b', // zinc-900
+    accentColor: '#18181b',
     badgeBg: 'bg-zinc-100 text-zinc-800 border-zinc-200',
     buttonBg: 'bg-zinc-900 text-white hover:bg-zinc-800',
-    secondaryButtonBg: 'bg-zinc-50 border border-zinc-200 text-zinc-800 hover:bg-zinc-100',
+    secondaryButtonBg:
+      'bg-zinc-50 border border-zinc-200 text-zinc-800 hover:bg-zinc-100',
     previewGradient: 'from-zinc-100 to-zinc-200',
     headerBadge: 'bg-zinc-100 text-zinc-700'
   },
+
+  // 2. Professional dark theme
   {
     id: 'midnight',
-    name: 'Midnight Dark',
-    description: 'OLED obsidian with cool gray accents',
-    pageBg: 'bg-zinc-950',
-    cardBg: 'bg-zinc-900',
-    cardBorder: 'border-zinc-800',
-    cardShadow: 'shadow-2xl shadow-black/80',
-    textColor: 'text-zinc-50',
-    textMuted: 'text-zinc-400',
-    accentColor: '#38bdf8', // sky-400
-    badgeBg: 'bg-zinc-800 text-zinc-200 border-zinc-700',
-    buttonBg: 'bg-white text-zinc-950 hover:bg-zinc-200 font-semibold',
-    secondaryButtonBg: 'bg-zinc-800/80 border border-zinc-700 text-zinc-100 hover:bg-zinc-800',
-    previewGradient: 'from-zinc-900 via-zinc-950 to-black',
-    headerBadge: 'bg-zinc-800 text-zinc-300'
+    name: 'Midnight',
+    description: 'Premium charcoal with refined silver accents',
+    pageBg: 'bg-[#111318]',
+    cardBg: 'bg-[#1b1e25]',
+    cardBorder: 'border-white/10',
+    cardShadow: 'shadow-xl shadow-black/20',
+    textColor: 'text-[#f4f5f7]',
+    textMuted: 'text-[#a1a7b3]',
+    accentColor: '#a5b4fc',
+    badgeBg: 'bg-[#292d38] text-[#d9defa] border-[#3b4050]',
+    buttonBg: 'bg-[#e5e7eb] text-[#18181b] hover:bg-white',
+    secondaryButtonBg:
+      'bg-[#252934] border border-white/10 text-[#e5e7eb] hover:bg-[#303541]',
+    previewGradient: 'from-[#252936] via-[#171a22] to-[#0b0d12]',
+    headerBadge: 'bg-[#292d38] text-[#d9defa]'
   },
+
+  // 3. Sophisticated warm gradient
   {
     id: 'sunset',
-    name: 'Sunset Glow',
-    description: 'Warm coral, amber & rose gradients',
-    pageBg: 'bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50',
-    cardBg: 'bg-white/90 backdrop-blur-md',
-    cardBorder: 'border-rose-200/70',
-    cardShadow: 'shadow-lg shadow-rose-900/5',
-    textColor: 'text-zinc-900',
-    textMuted: 'text-rose-900/60',
-    accentColor: '#f43f5e', // rose-500
-    badgeBg: 'bg-rose-50 text-rose-800 border-rose-200',
-    buttonBg: 'bg-gradient-to-r from-rose-500 to-amber-500 text-white hover:opacity-95',
-    secondaryButtonBg: 'bg-white/80 border border-rose-200 text-rose-900 hover:bg-white',
-    previewGradient: 'from-amber-400 via-rose-400 to-orange-400',
-    headerBadge: 'bg-rose-100 text-rose-800'
+    name: 'Terracotta',
+    description: 'Elegant clay, muted rose and warm ivory',
+    pageBg: 'bg-gradient-to-br from-[#faf4f0] via-[#f8eeeb] to-[#f4e7df]',
+    cardBg: 'bg-[#fffdfb]',
+    cardBorder: 'border-[#e8d4cb]',
+    cardShadow: 'shadow-md shadow-[#754b3c]/5',
+    textColor: 'text-[#34231f]',
+    textMuted: 'text-[#856b63]',
+    accentColor: '#b85c46',
+    badgeBg: 'bg-[#f5e6df] text-[#8e4535] border-[#e8c9bd]',
+    buttonBg: 'bg-[#a94f3b] text-white hover:bg-[#8f4030]',
+    secondaryButtonBg:
+      'bg-[#fffaf7] border border-[#e8d4cb] text-[#754638] hover:bg-[#f8ece6]',
+    previewGradient: 'from-[#d7a18d] via-[#c17b68] to-[#895347]',
+    headerBadge: 'bg-[#f5e6df] text-[#8e4535]'
   },
+
+  // 4. Refined blue business theme
   {
     id: 'ocean',
-    name: 'Ocean Breeze',
-    description: 'Deep navy with electric cyan highlights',
-    pageBg: 'bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950',
-    cardBg: 'bg-slate-900/90 backdrop-blur-md',
-    cardBorder: 'border-cyan-500/30',
-    cardShadow: 'shadow-xl shadow-cyan-950/40',
-    textColor: 'text-slate-50',
-    textMuted: 'text-slate-400',
-    accentColor: '#06b6d4', // cyan-500
-    badgeBg: 'bg-cyan-950/80 text-cyan-300 border-cyan-800/50',
-    buttonBg: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:opacity-95',
-    secondaryButtonBg: 'bg-slate-800/90 border border-slate-700 text-slate-200 hover:bg-slate-800',
-    previewGradient: 'from-cyan-500 via-blue-600 to-slate-900',
-    headerBadge: 'bg-cyan-950 text-cyan-300'
+    name: 'Navy Executive',
+    description: 'Deep navy, cool white and confident blue accents',
+    pageBg: 'bg-[#101b2d]',
+    cardBg: 'bg-[#19283d]',
+    cardBorder: 'border-[#334761]',
+    cardShadow: 'shadow-xl shadow-[#07101e]/30',
+    textColor: 'text-[#f1f5f9]',
+    textMuted: 'text-[#a9b8cb]',
+    accentColor: '#60a5fa',
+    badgeBg: 'bg-[#233750] text-[#bfdbfe] border-[#385576]',
+    buttonBg: 'bg-[#60a5fa] text-[#0b1728] font-semibold hover:bg-[#93c5fd]',
+    secondaryButtonBg:
+      'bg-[#203149] border border-[#3b506a] text-[#e2e8f0] hover:bg-[#293e58]',
+    previewGradient: 'from-[#416b9b] via-[#1e3a5f] to-[#101b2d]',
+    headerBadge: 'bg-[#233750] text-[#bfdbfe]'
   },
+
+  // 5. Keep Emerald Cyber unchanged
   {
     id: 'emerald',
     name: 'Emerald Cyber',
@@ -77,47 +90,73 @@ export const THEMES = [
     cardShadow: 'shadow-xl shadow-emerald-950/50',
     textColor: 'text-emerald-50',
     textMuted: 'text-emerald-400/70',
-    accentColor: '#10b981', // emerald-500
+    accentColor: '#10b981',
     badgeBg: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/50',
     buttonBg: 'bg-emerald-500 text-zinc-950 font-bold hover:bg-emerald-400',
-    secondaryButtonBg: 'bg-emerald-950/60 border border-emerald-800 text-emerald-200 hover:bg-emerald-900/50',
+    secondaryButtonBg:
+      'bg-emerald-950/60 border border-emerald-800 text-emerald-200 hover:bg-emerald-900/50',
     previewGradient: 'from-emerald-950 via-emerald-800 to-teal-900',
     headerBadge: 'bg-emerald-950 text-emerald-300'
   },
+
+  // 6. Premium muted purple
   {
     id: 'lavender',
-    name: 'Lavender Mist',
-    description: 'Soft dreamy lilac with indigo accents',
-    pageBg: 'bg-gradient-to-br from-purple-50 via-indigo-50/50 to-pink-50',
-    cardBg: 'bg-white/90 backdrop-blur-md',
-    cardBorder: 'border-purple-200/80',
-    cardShadow: 'shadow-md shadow-purple-900/5',
-    textColor: 'text-zinc-900',
-    textMuted: 'text-purple-900/60',
-    accentColor: '#7c3aed', // violet-600
-    badgeBg: 'bg-purple-50 text-purple-800 border-purple-200',
-    buttonBg: 'bg-purple-600 text-white hover:bg-purple-700',
-    secondaryButtonBg: 'bg-white border border-purple-200 text-purple-900 hover:bg-purple-50',
-    previewGradient: 'from-purple-300 via-indigo-200 to-pink-200',
-    headerBadge: 'bg-purple-100 text-purple-800'
+    name: 'Soft Indigo',
+    description: 'Subtle lavender, clean whites and indigo accents',
+    pageBg: 'bg-gradient-to-br from-[#f7f7ff] via-[#f1f0fb] to-[#eeedf8]',
+    cardBg: 'bg-white/95',
+    cardBorder: 'border-[#dedcf0]',
+    cardShadow: 'shadow-md shadow-[#51458c]/5',
+    textColor: 'text-[#24213a]',
+    textMuted: 'text-[#77728f]',
+    accentColor: '#6558b5',
+    badgeBg: 'bg-[#eeebfb] text-[#514394] border-[#dcd5f5]',
+    buttonBg: 'bg-[#55469e] text-white hover:bg-[#443681]',
+    secondaryButtonBg:
+      'bg-white border border-[#dedcf0] text-[#514394] hover:bg-[#f5f3ff]',
+    previewGradient: 'from-[#c8c2ed] via-[#aaa5df] to-[#e0cfe9]',
+    headerBadge: 'bg-[#eeebfb] text-[#514394]'
   },
+
+  // 7. Premium neutral earth theme
   {
     id: 'latte',
-    name: 'Warm Clay & Earth',
-    description: 'Warm latte, espresso & sand tones',
-    pageBg: 'bg-[#f7f4ef]',
-    cardBg: 'bg-[#fffdf9]',
-    cardBorder: 'border-amber-900/15',
-    cardShadow: 'shadow-xs',
-    textColor: 'text-[#2e1d12]',
-    textMuted: 'text-[#7e695a]',
-    accentColor: '#78350f', // amber-900
-    badgeBg: 'bg-[#efe9df] text-[#543b27] border-[#ded4c3]',
-    buttonBg: 'bg-[#3e2718] text-white hover:bg-[#2e1d12]',
-    secondaryButtonBg: 'bg-white border border-[#ded4c3] text-[#3e2718] hover:bg-[#f7f4ef]',
-    previewGradient: 'from-[#e7d8c5] to-[#c9ad93]',
-    headerBadge: 'bg-[#efe9df] text-[#543b27]'
-  }
+    name: 'Linen & Espresso',
+    description: 'Warm ivory, understated taupe and rich espresso',
+    pageBg: 'bg-[#f5f2ec]',
+    cardBg: 'bg-[#fffefa]',
+    cardBorder: 'border-[#e4ddd1]',
+    cardShadow: 'shadow-md shadow-[#4b3828]/5',
+    textColor: 'text-[#30271f]',
+    textMuted: 'text-[#817366]',
+    accentColor: '#806044',
+    badgeBg: 'bg-[#eee7dc] text-[#614a35] border-[#dfd2bf]',
+    buttonBg: 'bg-[#443326] text-white hover:bg-[#302319]',
+    secondaryButtonBg:
+      'bg-[#fffefa] border border-[#dfd2bf] text-[#443326] hover:bg-[#f2ece2]',
+    previewGradient: 'from-[#e8ddcc] via-[#cbb79d] to-[#a58b70]',
+    headerBadge: 'bg-[#eee7dc] text-[#614a35]'
+  },
+  {
+    // 8. Premium midnight sapphire theme
+    id: 'sapphire',
+    name: 'Midnight Sapphire',
+    description: 'Deep navy, icy blue and crisp whites with sapphire accents',
+    pageBg: 'bg-gradient-to-br from-[#f0f4fb] via-[#eaf0fa] to-[#e2eaf7]',
+    cardBg: 'bg-white/95',
+    cardBorder: 'border-[#d8e2f1]',
+    cardShadow: 'shadow-lg shadow-[#243e70]/[0.06]',
+    textColor: 'text-[#192d50]',
+    textMuted: 'text-[#7185a5]',
+    accentColor: '#426bb0',
+    badgeBg: 'bg-[#e5edfa] text-[#294c83] border-[#d0def4]',
+    buttonBg: 'bg-[#243e70] text-white hover:bg-[#192d50]',
+    secondaryButtonBg:
+      'bg-white border border-[#d8e2f1] text-[#294c83] hover:bg-[#f0f4fb]',
+    previewGradient: 'from-[#c5d6f2] via-[#7396cf] to-[#243e70]',
+    headerBadge: 'bg-[#e5edfa] text-[#294c83]'
+  },
 ];
 
 export const COLOR_PRESETS = [

@@ -23,7 +23,7 @@ export default function Register() {
       register(name, username.toLowerCase(), email, result.profile);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     }
     finally {
       setLoading(false);

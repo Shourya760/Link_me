@@ -1,10 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Check,
-  Copy,
   ExternalLink,
-  Smartphone,
-  Laptop,
   Star,
   Sparkles,
   Link as LinkIcon,
@@ -30,21 +26,10 @@ const SOCIAL_ICONS = {
 };
 
 export default function DevicePreview({ profile }) {
-  const [deviceMode, setDeviceMode] = useState('mobile'); // 'mobile' | 'desktop'
-  const [copied, setCopied] = useState(false);
-
   const activeTheme = THEMES.find(t => t.id === profile?.theme?.id) || THEMES[0];
   const activeButtonStyle = BUTTON_STYLES.find(b => b.id === profile?.theme?.buttonStyle) || BUTTON_STYLES[1];
   const activeFontStyle = FONT_STYLES.find(f => f.id === profile?.theme?.fontStyle) || FONT_STYLES[0];
   const accentColor = profile?.theme?.accentColor || activeTheme.accentColor;
-
-  const shareUrl = `${window.location.origin}${profile?.username ? `/p/${profile.username}` : '/portfolio'}`;
-
-  const handleCopy = () => {
-    navigator.clipboard?.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   // Get active socials
   const activeSocials = PLATFORMS.filter(p => profile?.socials?.[p.id]?.trim());
@@ -84,350 +69,246 @@ export default function DevicePreview({ profile }) {
     }
   };
 
-  return (
-    <div className="flex flex-col items-center w-full">
-      {/* Top Preview Controls Bar */}
-      <div className="w-full flex items-center justify-between mb-3 px-1">
-        <div className="flex items-center gap-1.5 bg-zinc-100 p-1 rounded-xl">
-          <button
-            type="button"
-            onClick={() => setDeviceMode('mobile')}
-            className={`flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg transition ${deviceMode === 'mobile'
-              ? 'bg-white text-zinc-900 shadow-2xs'
-              : 'text-zinc-500 hover:text-zinc-800'
-              }`}
-            title="Mobile Screen Preview"
-          >
-            <Smartphone size={13} />
-            <span>Mobile</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setDeviceMode('desktop')}
-            className={`flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg transition ${deviceMode === 'desktop'
-              ? 'bg-white text-zinc-900 shadow-2xs'
-              : 'text-zinc-500 hover:text-zinc-800'
-              }`}
-            title="Desktop Card Preview"
-          >
-            <Laptop size={13} />
-            <span>Card</span>
-          </button>
-        </div>
+  const renderCustomLink = (link) => {
+    const shape = activeButtonStyle.id === 'pill'
+      ? 'rounded-full'
+      : activeButtonStyle.id === 'square'
+        ? 'rounded-md'
+        : 'rounded-lg';
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="flex items-center gap-1 text-[11px] font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded-lg transition"
-          >
-            {copied ? (
-              <>
-                <Check size={12} className="text-emerald-600" />
-                <span className="text-emerald-700 font-medium">Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy size={12} className="text-zinc-500" />
-                <span>Copy URL</span>
-              </>
+    return (
+      <a
+        key={link.id}
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex items-center gap-2 p-2 border ${shape} ${activeTheme.cardBg} ${activeTheme.cardBorder} ${link.highlight ? 'ring-1 ring-amber-400/70 shadow-sm' : ''}`}
+      >
+        <span
+          className="w-7 h-7 shrink-0 rounded-md flex items-center justify-center"
+          style={{
+            backgroundColor: link.highlight ? accentColor : `${accentColor}20`,
+            color: link.highlight ? '#fff' : accentColor,
+          }}
+        >
+          {getCustomLinkIcon(link.icon)}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className={`flex items-center gap-1 text-[10px] font-semibold ${activeTheme.textColor}`}>
+            <span className="truncate">{link.title}</span>
+            {link.highlight && (
+              <span className="shrink-0 rounded-full bg-amber-400 px-1.5 py-0.5 text-[8px] font-bold uppercase text-zinc-950">
+                ★ Hot
+              </span>
             )}
-          </button>
-          <a
-            href={shareUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[11px] font-semibold text-zinc-800 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded-lg transition"
-            title="Open in new window"
-          >
-            <ExternalLink size={12} />
-          </a>
-        </div>
+          </span>
+          {link.subtitle && (
+            <span className={`block truncate text-[9px] ${activeTheme.textMuted}`}>
+              {link.subtitle}
+            </span>
+          )}
+        </span>
+        <ExternalLink size={11} className="shrink-0 text-zinc-400" />
+      </a>
+    );
+  };
+
+  return (
+    <div className="flex h-full min-h-0 flex-col items-center w-full gap-3">
+      <div className="flex w-full shrink-0 items-center justify-between px-1 text-xs">
+        <span className="font-semibold text-zinc-800">Live preview</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          In sync
+        </span>
       </div>
 
-      {/* Frame Container */}
-      <div
-        className={`w-full transition-all duration-300 ${deviceMode === 'mobile'
-          ? 'max-w-[340px] sm:max-w-[360px]'
-          : 'max-w-full'
-          }`}
-      >
-        <div
-          className={`relative transition-all duration-300 ${deviceMode === 'mobile'
-            ? `rounded-[38px] p-3 shadow-2xl ${['clean', 'sunset', 'lavender', 'latte'].includes(activeTheme.id)
-              ? 'bg-zinc-900 shadow-zinc-900/20 ring-1 ring-zinc-800'
-              : 'bg-zinc-800 shadow-black/60 ring-1 ring-zinc-700'}`
-            : 'rounded-2xl'
-            }`}
-        >
-          {/* Top Speaker / Dynamic Island */}
-          {deviceMode === 'mobile' && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-4 bg-zinc-950 rounded-full z-20 flex items-center justify-between px-2">
-              <span className="w-2 h-2 rounded-full bg-zinc-900" />
-              <span className="w-2 h-2 rounded-full bg-blue-900/60" />
+      {/* Phone frame */}
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+        <div className="w-full max-w-[250px] sm:max-w-[270px] lg:max-w-[290px]">
+          <div className="relative rounded-[32px] bg-zinc-900 p-1.5 shadow-xl ring-1 ring-zinc-800">
+
+            {/* Dynamic Island */}
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center justify-between w-20 h-3.5 px-2 rounded-full bg-black">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-900" />
             </div>
-          )}
 
-          {/* Inner Phone Screen */}
-          <div
-            className={`w-full ${deviceMode === 'mobile' ? 'rounded-[30px] overflow-hidden border border-black/10' : 'rounded-2xl'} ${activeTheme.pageBg} ${activeFontStyle.styleClass} transition-colors duration-300 relative`}
-            style={deviceMode === 'mobile'
-              ? { minHeight: '560px', maxHeight: '680px', overflowY: 'auto' }
-              : { minHeight: '320px' }}
-          >
-            {/* Status Bar */}
-            {deviceMode === 'mobile' && (
-              <div className="pt-3 px-6 pb-2 flex items-center justify-between text-[11px] font-semibold tracking-tight opacity-75 select-none">
+            {/* Phone Screen */}
+            <div
+              className={`relative w-full h-[min(680px,calc(100dvh-10rem))] min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:none] rounded-[26px] border border-black/10 ${activeTheme.pageBg} ${activeFontStyle.styleClass} transition-colors duration-300`}
+            >
+              {/* Status Bar */}
+              <div className="flex justify-between px-5 pt-5 pb-2 text-[9px] font-semibold opacity-75">
                 <span className={activeTheme.textColor}>9:41</span>
-                <div className="flex items-center gap-1.5">
-                  <span className={`w-3 h-2 rounded-2xs border ${activeTheme.textColor === 'text-white' || activeTheme.textColor === 'text-slate-50' || activeTheme.textColor === 'text-emerald-50' ? 'border-white' : 'border-zinc-800'}`} />
-                  <span className={`text-[10px] ${activeTheme.textColor}`}>5G</span>
-                </div>
+                <span className={activeTheme.textColor}>▰ 5G</span>
               </div>
-            )}
 
-            {/* Screen Content Wrapper */}
-            <div className="p-4 sm:p-5 space-y-4">
+              <div className="p-3 space-y-3">
+                {/* Profile */}
+                <div className={`${activeTheme.cardBg} ${activeTheme.cardBorder} border rounded-xl p-3 text-center`}>
+                  <div className="relative inline-block mb-2">
+                    {profile?.avatar ? (
+                      <img
+                        src={profile.avatar}
+                        alt={profile.name || "User"}
+                        className="w-14 h-14 rounded-full object-cover mx-auto"
+                      />
+                    ) : (
+                      <div
+                        className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg font-bold"
+                        style={{ backgroundColor: accentColor }}
+                      >
+                        {profile?.name?.charAt(0) || "U"}
+                      </div>
+                    )}
+                    <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white" />
+                  </div>
 
-              {/* Profile Card */}
-              <div className={`${activeTheme.cardBg} ${activeTheme.cardBorder} ${activeTheme.cardShadow} border rounded-2xl p-4 text-center relative transition-all duration-300`}>
-
-                {/* Avatar with Status */}
-                <div className="relative inline-block mb-2.5">
-                  {profile?.avatar ? (
-                    <img
-                      src={profile.avatar}
-                      alt={profile.name || 'User'}
-                      className="w-18 h-18 rounded-full object-cover mx-auto ring-3 ring-black/5 shadow-xs"
-                    />
-                  ) : (
-                    <div
-                      className="w-18 h-18 rounded-full text-white text-xl font-bold flex items-center justify-center mx-auto shadow-xs"
-                      style={{ backgroundColor: accentColor }}
-                    >
-                      {profile?.name?.charAt(0) || 'U'}
-                    </div>
-                  )}
-                  <span
-                    className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full shadow-2xs"
-                    title="Active"
-                  />
-                </div>
-
-                {/* Name & Handle */}
-                <div>
-                  <div className="flex items-center justify-center gap-1.5">
-                    <h2 className={`text-base font-bold tracking-tight ${activeTheme.textColor}`}>
-                      {profile?.name || 'Your Name'}
+                  <div className="flex items-center justify-center gap-1">
+                    <h2 className={`text-sm font-bold truncate ${activeTheme.textColor}`}>
+                      {profile?.name || "Your Name"}
                     </h2>
                     <span
-                      className="text-[10px] px-1 py-0.2 rounded-full font-semibold"
-                      style={{ backgroundColor: `${accentColor}20`, color: accentColor }}
+                      className="text-[9px] rounded-full px-1"
+                      style={{ color: accentColor }}
                     >
                       ✓
                     </span>
                   </div>
-                  <p className="text-[11px] font-mono text-zinc-400 mt-0.5">
-                    {profile?.username ? <>linkme.to/<span className="font-medium">{profile.username}</span></> : 'Choose your username'}
+
+                  <p className="text-[10px] text-zinc-400 font-mono mt-0.5">
+                    {profile?.username
+                      ? `linkme.to/${profile.username}`
+                      : "Choose your username"}
                   </p>
 
                   {profile?.title && (
-                    <p className={`text-xs font-medium mt-1 leading-snug ${activeTheme.textColor} opacity-90`}>
+                    <p className={`text-[11px] mt-1 ${activeTheme.textColor}`}>
                       {profile.title}
                     </p>
                   )}
 
                   {profile?.bio && (
-                    <p className={`text-[11px] mt-1.5 leading-relaxed line-clamp-3 ${activeTheme.textMuted}`}>
+                    <p className={`text-[10px] mt-1.5 leading-relaxed line-clamp-3 ${activeTheme.textMuted}`}>
                       {profile.bio}
                     </p>
                   )}
+
+                  {activeSocials.length > 0 && (
+                    <div className="flex flex-wrap justify-center gap-2 mt-2.5 pt-2 border-t border-black/5">
+                      {activeSocials.map((platform) => {
+                        const Icon = SOCIAL_ICONS[platform.id] || FaShareNodes;
+                        const value = profile?.socials?.[platform.id];
+
+                        return (
+                          <a
+                            key={platform.id}
+                            href={getSocialUrl(platform.id, value)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={platform.label}
+                            className={`w-7 h-7 rounded-full bg-black/5 flex items-center justify-center  ${activeTheme.textColor}`}
+                          >
+                            <Icon size={17} />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
-                {/* Social Icons Strip */}
-                {activeSocials.length > 0 && (
-                  <div className="flex items-center justify-center flex-wrap gap-1.5 mt-3 pt-3 border-t border-black/5">
-                    {activeSocials.map(platform => {
-                      const val = profile.socials[platform.id];
-                      const Icon = SOCIAL_ICONS[platform.id] || FaShareNodes;
-                      return (
-                        <a
-                          key={platform.id}
-                          href={getSocialUrl(platform.id, val)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition hover:scale-105"
-                          title={platform.label}
-                          style={{ color: activeTheme.textColor.includes('white') || activeTheme.textColor.includes('slate-50') ? '#ffffff' : '#18181b' }}
-                        >
-                          <Icon size={14} />
-                        </a>
-                      );
-                    })}
-                  </div>
+                {/* Featured Links */}
+                {profile?.customLinks?.length > 0 && (
+                  <section className="space-y-1.5">
+                    <div className="flex justify-between px-1 text-[9px] font-bold uppercase tracking-wider text-zinc-400">
+                      <span>Featured Links</span>
+                      <span>{profile.customLinks.length} Links</span>
+                    </div>
+                    {profile.customLinks.map(renderCustomLink)}
+                  </section>
                 )}
-              </div>
 
-              {/* Custom Featured Links */}
-              {profile?.customLinks && profile.customLinks.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between px-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                      Featured Links
-                    </span>
-                    <span className="text-[10px] text-zinc-400">
-                      {profile.customLinks.length} Links
-                    </span>
-                  </div>
-
-                  {profile.customLinks.map(link => {
-                    const isPill = activeButtonStyle.id === 'pill';
-                    const isSquare = activeButtonStyle.id === 'square';
-                    const isOutline = activeButtonStyle.id === 'outline';
-
-                    return (
-                      <a
-                        key={link.id}
-                        href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`block w-full p-2.5 text-left transition duration-200 group relative border shadow-2xs ${isPill ? 'rounded-full px-4' : isSquare ? 'rounded-md' : isOutline ? 'rounded-xl border-2' : 'rounded-xl'
-                          } ${link.highlight
-                            ? 'ring-1 ring-amber-400/50'
-                            : ''
-                          } ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div
-                              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition"
-                              style={{
-                                backgroundColor: link.highlight ? accentColor : `${accentColor}15`,
-                                color: link.highlight ? '#ffffff' : accentColor
-                              }}
-                            >
-                              {getCustomLinkIcon(link.icon)}
-                            </div>
-                            <div className="min-w-0">
-                              <p className={`text-xs font-semibold truncate ${activeTheme.textColor} group-hover:underline flex items-center gap-1`}>
-                                <span>{link.title}</span>
-                                {link.highlight && (
-                                  <span className="text-[9px] bg-amber-400 text-zinc-950 font-bold px-1.5 py-0.2 rounded-full uppercase tracking-wider">
-                                    ★ Hot
-                                  </span>
-                                )}
-                              </p>
-                              {link.subtitle && (
-                                <p className={`text-[10px] truncate ${activeTheme.textMuted}`}>
-                                  {link.subtitle}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-
-                          <ExternalLink size={12} className="text-zinc-400 group-hover:text-zinc-600 transition shrink-0" />
-                        </div>
-                      </a>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Photos & Portfolio Showcase */}
-              {profile?.photos && profile.photos.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">
-                    Visual Showcase & Photos
-                  </span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {profile.photos.slice(0, 4).map(photo => (
-                      <div
-                        key={photo.id}
-                        className={`${activeTheme.cardBg} ${activeTheme.cardBorder} border rounded-xl overflow-hidden group shadow-2xs`}
-                      >
-                        <div className="aspect-4/3 w-full bg-zinc-200 overflow-hidden relative">
+                {/* Photos */}
+                {profile?.photos?.length > 0 && (
+                  <section className="space-y-1.5">
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-zinc-400">
+                      Photos & Showcase
+                    </p>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {profile.photos.slice(0, 4).map((photo) => (
+                        <div
+                          key={photo.id}
+                          className={`overflow-hidden rounded-lg border ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
+                        >
                           <img
                             src={photo.url}
-                            alt={photo.title || 'Work'}
-                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                            alt={photo.title || "Work"}
+                            className="w-full aspect-[4/3] object-cover"
                           />
-                        </div>
-                        <div className="p-1.5">
-                          <p className={`text-[11px] font-semibold truncate ${activeTheme.textColor}`}>
+                          <p className={`p-1 text-[9px] truncate ${activeTheme.textColor}`}>
                             {photo.title}
                           </p>
-                          {photo.caption && (
-                            <p className={`text-[9px] truncate ${activeTheme.textMuted}`}>
-                              {photo.caption}
-                            </p>
-                          )}
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                      ))}
+                    </div>
+                  </section>
+                )}
 
-              {/* Interests Tags */}
-              {profile?.interests && profile.interests.length > 0 && (
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">
-                    Interests & Focus
-                  </span>
-                  <div className="flex flex-wrap gap-1">
-                    {profile.interests.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${activeTheme.badgeBg}`}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                {/* Interests */}
+                {profile?.interests?.length > 0 && (
+                  <section>
+                    <p className="text-[9px] font-bold uppercase text-zinc-400 mb-1">
+                      Interests
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {profile.interests.map((tag, i) => (
+                        <span
+                          key={i}
+                          className={`text-[9px] px-2 py-1 rounded-full border ${activeTheme.badgeBg}`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </section>
+                )}
 
-              {/* Achievements */}
-              {profile?.achievements && profile.achievements.length > 0 && (
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">
-                    Milestones
-                  </span>
-                  <div className="space-y-1">
-                    {profile.achievements.slice(0, 3).map(ach => (
+                {/* Achievements */}
+                {profile?.achievements?.length > 0 && (
+                  <section className="space-y-1">
+                    <p className="text-[9px] font-bold uppercase text-zinc-400">
+                      Achievements
+                    </p>
+                    {profile.achievements.slice(0, 3).map((ach) => (
                       <div
                         key={ach.id}
-                        className={`flex items-center justify-between p-2 rounded-lg border text-[11px] ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
+                        className={`flex items-center justify-between gap-2 p-2 rounded-lg border text-[10px] ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
                       >
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <Star size={11} className="text-amber-500 fill-amber-500 shrink-0" />
-                          <span className={`truncate font-medium ${activeTheme.textColor}`}>{ach.title}</span>
-                        </div>
+                        <span className={`truncate ${activeTheme.textColor}`}>
+                          {ach.title}
+                        </span>
                         {ach.year && (
-                          <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded border shrink-0 ${activeTheme.badgeBg}`}>
+                          <span className="text-[9px] text-zinc-400 shrink-0">
                             {ach.year}
                           </span>
                         )}
                       </div>
                     ))}
-                  </div>
-                </div>
-              )}
+                  </section>
+                )}
 
-              {/* Footer inside mobile preview */}
-              <div className="text-center pt-2 pb-1">
-                <span className="text-[10px] text-zinc-400 flex items-center justify-center gap-1">
-                  Powered by <span className="font-bold text-zinc-600">linkme.</span>
-                </span>
+                {/* Footer */}
+                <div className="text-center py-2 text-[9px] text-zinc-400">
+                  Powered by <span className="font-bold">linkme.</span>
+                </div>
               </div>
             </div>
 
-            {/* Bottom Home Indicator Bar */}
-            {deviceMode === 'mobile' && (
-              <div className="pb-2 pt-1 flex justify-center">
-                <div className="w-28 h-1 bg-zinc-300 rounded-full" />
-              </div>
-            )}
+            {/* Home Indicator */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+              <div className="w-16 h-1 rounded-full bg-white/70" />
+            </div>
           </div>
         </div>
       </div>

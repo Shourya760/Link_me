@@ -282,11 +282,12 @@ export default function Step2Links({
                   Destination URL
                 </label>
                 <input
-                  type="url"
+                  type="text"
+                  inputMode="url"
                   required
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
-                  placeholder="https://example.com"
+                  placeholder="example.com or https://example.com"
                   className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 bg-white focus:outline-none focus:border-zinc-900"
                 />
               </div>

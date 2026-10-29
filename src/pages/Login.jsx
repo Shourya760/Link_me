@@ -19,7 +19,12 @@ export default function Login() {
       localStorage.setItem('linkme_token', result.token);
       login(result.user.email);
       navigate('/');
-    } catch (err) { setError(err.message); } finally { setLoading(false); }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (

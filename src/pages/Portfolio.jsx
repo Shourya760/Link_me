@@ -216,7 +216,7 @@ export default function Portfolio() {
             )}
 
             {profile.bio && (
-              <p className={`text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed ${activeTheme.textMuted}`}>
+              <p className={`text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed ${activeTheme.textColor}`}>
                 {profile.bio}
               </p>
             )}
@@ -234,9 +234,8 @@ export default function Portfolio() {
                     href={getSocialUrl(platform.id, val)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition hover:scale-110 active:scale-95"
+                    className={`w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition hover:scale-110 active:scale-95 ${activeTheme.textColor} `}
                     title={platform.label}
-                    style={{ color: activeTheme.textColor.includes('white') || activeTheme.textColor.includes('slate-50') ? '#ffffff' : '#18181b' }}
                   >
                     <Icon size={16} />
                   </a>
@@ -247,147 +246,155 @@ export default function Portfolio() {
         </div>
 
         {/* Custom Featured Links */}
-        {profile.customLinks && profile.customLinks.length > 0 && (
-          <section className="space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
-              Featured Links & Actions
-            </h2>
-            <div className="space-y-2.5">
-              {profile.customLinks.map(link => (
-                <a
-                  key={link.id}
-                  href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`block w-full p-3.5 text-left transition duration-200 group relative border shadow-2xs hover:scale-[1.01] active:scale-[0.99] ${isPill ? 'rounded-full px-5' : isSquare ? 'rounded-lg' : isOutline ? 'rounded-2xl border-2' : 'rounded-2xl'
-                    } ${link.highlight
-                      ? 'ring-2 ring-amber-400/60 shadow-md'
-                      : ''
-                    } ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition"
-                        style={{
-                          backgroundColor: link.highlight ? accentColor : `${accentColor}15`,
-                          color: link.highlight ? '#ffffff' : accentColor
-                        }}
-                      >
-                        {getCustomLinkIcon(link.icon)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className={`text-sm font-bold truncate ${activeTheme.textColor} group-hover:underline flex items-center gap-1.5`}>
-                          <span>{link.title}</span>
-                          {link.highlight && (
-                            <span className="text-[10px] bg-amber-400 text-zinc-950 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                              ★ Hot
-                            </span>
-                          )}
-                        </p>
-                        {link.subtitle && (
-                          <p className={`text-xs truncate ${activeTheme.textMuted} mt-0.5`}>
-                            {link.subtitle}
+        {
+          profile.customLinks && profile.customLinks.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
+                Featured Links & Actions
+              </h2>
+              <div className="space-y-2.5">
+                {profile.customLinks.map(link => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block w-full p-3.5 text-left transition duration-200 group relative border shadow-2xs hover:scale-[1.01] active:scale-[0.99] ${isPill ? 'rounded-full px-5' : isSquare ? 'rounded-lg' : isOutline ? 'rounded-2xl border-2' : 'rounded-2xl'
+                      } ${link.highlight
+                        ? 'ring-2 ring-amber-400/60 shadow-md'
+                        : ''
+                      } ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition"
+                          style={{
+                            backgroundColor: link.highlight ? accentColor : `${accentColor}15`,
+                            color: link.highlight ? '#ffffff' : accentColor
+                          }}
+                        >
+                          {getCustomLinkIcon(link.icon)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className={`text-sm font-bold truncate ${activeTheme.textColor} group-hover:underline flex items-center gap-1.5`}>
+                            <span>{link.title}</span>
+                            {link.highlight && (
+                              <span className="text-[10px] bg-amber-400 text-zinc-950 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                ★ Hot
+                              </span>
+                            )}
                           </p>
-                        )}
+                          {link.subtitle && (
+                            <p className={`text-xs truncate ${activeTheme.textMuted} mt-0.5`}>
+                              {link.subtitle}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <ExternalLink size={15} className="text-zinc-400 group-hover:text-zinc-600 transition shrink-0 mr-1" />
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
+                      <ExternalLink size={15} className="text-zinc-400 group-hover:text-zinc-600 transition shrink-0 mr-1" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )
+        }
 
         {/* Visual Photos Showcase */}
-        {profile.photos && profile.photos.length > 0 && (
-          <section className="space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
-              Visual Showcase & Media
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {profile.photos.map(photo => (
-                <div
-                  key={photo.id}
-                  onClick={() => setSelectedPhotoModal(photo)}
-                  className={`group rounded-2xl border ${activeTheme.cardBorder} overflow-hidden bg-black/5 hover:shadow-md transition cursor-pointer`}
-                >
-                  <div className="aspect-4/3 w-full overflow-hidden bg-zinc-200 relative">
-                    <img
-                      src={photo.url}
-                      alt={photo.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    />
-                  </div>
-                  <div className="p-3">
-                    <p className={`text-xs font-bold truncate ${activeTheme.textColor}`}>
-                      {photo.title}
-                    </p>
-                    {photo.caption && (
-                      <p className={`text-[11px] truncate ${activeTheme.textMuted} mt-0.5`}>
-                        {photo.caption}
+        {
+          profile.photos && profile.photos.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
+                Visual Showcase & Media
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {profile.photos.map(photo => (
+                  <div
+                    key={photo.id}
+                    onClick={() => setSelectedPhotoModal(photo)}
+                    className={`group rounded-2xl border ${activeTheme.cardBorder} overflow-hidden bg-black/5 hover:shadow-md transition cursor-pointer`}
+                  >
+                    <div className="aspect-4/3 w-full overflow-hidden bg-zinc-200 relative">
+                      <img
+                        src={photo.url}
+                        alt={photo.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      />
+                    </div>
+                    <div className="p-3">
+                      <p className={`text-xs font-bold truncate ${activeTheme.textColor}`}>
+                        {photo.title}
                       </p>
-                    )}
+                      {photo.caption && (
+                        <p className={`text-[11px] truncate ${activeTheme.textMuted} mt-0.5`}>
+                          {photo.caption}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                ))}
+              </div>
+            </section>
+          )
+        }
 
         {/* Interests & Skills */}
-        {profile.interests && profile.interests.length > 0 && (
-          <section className="space-y-2.5 text-center">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-              Interests & Focus
-            </h2>
-            <div className="flex flex-wrap justify-center gap-1.5">
-              {profile.interests.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className={`px-3 py-1 text-xs font-semibold rounded-full border ${activeTheme.badgeBg}`}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
+        {
+          profile.interests && profile.interests.length > 0 && (
+            <section className="space-y-2.5 text-center">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                Interests & Focus
+              </h2>
+              <div className="flex flex-wrap justify-center gap-1.5">
+                {profile.interests.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className={`px-3 py-1 text-xs font-semibold rounded-full border ${activeTheme.badgeBg}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )
+        }
 
         {/* Achievements */}
-        {profile.achievements && profile.achievements.length > 0 && (
-          <section className="space-y-2.5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
-              Milestones & Recognition
-            </h2>
-            <div className="space-y-2">
-              {profile.achievements.map(ach => (
-                <div
-                  key={ach.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border ${activeTheme.cardBorder} text-xs`}
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Star size={13} className="text-amber-500 fill-amber-500 shrink-0" />
-                    <span className={`font-semibold truncate ${activeTheme.textColor}`}>
-                      {ach.title}
-                    </span>
+        {
+          profile.achievements && profile.achievements.length > 0 && (
+            <section className="space-y-2.5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
+                Milestones & Recognition
+              </h2>
+              <div className="space-y-2">
+                {profile.achievements.map(ach => (
+                  <div
+                    key={ach.id}
+                    className={`flex items-center justify-between p-3 rounded-xl border ${activeTheme.cardBorder} text-xs`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Star size={13} className="text-amber-500 fill-amber-500 shrink-0" />
+                      <span className={`font-semibold truncate ${activeTheme.textColor}`}>
+                        {ach.title}
+                      </span>
+                    </div>
+                    {ach.year && (
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded border shrink-0 ${activeTheme.badgeBg}`}>
+                        {ach.year}
+                      </span>
+                    )}
                   </div>
-                  {ach.year && (
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border shrink-0 ${activeTheme.badgeBg}`}>
-                      {ach.year}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-      </main>
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </main >
 
       {/* Footer Branding */}
-      <footer className="text-center py-8">
+      < footer className="text-center py-8" >
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-700 transition"
@@ -396,7 +403,7 @@ export default function Portfolio() {
           <span className="font-bold text-zinc-800">linkme.</span>
           <span>• Create your own free link</span>
         </Link>
-      </footer>
+      </footer >
 
       {/* QR Code Modal */}
       {

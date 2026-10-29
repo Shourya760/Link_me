@@ -20,7 +20,7 @@ export default function StepperHeader({ currentStep, onSelectStep, maxReachedSte
   const progressPercent = Math.round(((currentStep - 1) / (WIZARD_STEPS.length - 1)) * 100);
 
   return (
-    <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 sm:p-5 shadow-2xs mb-6">
+    <div className="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-sm">
       {/* Progress Bar Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">

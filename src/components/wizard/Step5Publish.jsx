@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Check, 
-  Copy, 
-  ExternalLink, 
-  QrCode, 
-  Share2, 
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  QrCode,
   Sparkles,
   Download,
-  Smartphone,
-  ShieldCheck,
+
 } from 'lucide-react';
-import { FaWhatsapp, FaLinkedin } from 'react-icons/fa';
+import { FaWhatsapp, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { THEMES } from '../../utils/storage';
 
@@ -37,7 +35,7 @@ export default function Step5Publish({ profile }) {
   const twitterShare = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
   const whatsappShare = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
   const linkedinShare = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-
+  const instagramShare = `https://www.instagram.com/`;
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -199,6 +197,16 @@ export default function Step5Publish({ profile }) {
           >
             <FaLinkedin size={14} className="text-blue-600" />
             <span>Share to LinkedIn</span>
+          </a>
+
+          <a
+            href={instagramShare}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-xs font-semibold text-zinc-800 transition"
+          >
+            <FaInstagram size={14} className="text-orange-600" />
+            <span>Share to Instagram</span>
           </a>
         </div>
       </div>

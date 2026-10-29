@@ -85,65 +85,14 @@ export default function Home() {
     <div className="min-h-screen bg-neutral-50/70 text-zinc-900 pb-16">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-
-        {/* Top Banner Bar */}
-        <section className="bg-white border border-zinc-200/90 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full animate-pulse ${profile.isPublic ? 'bg-emerald-500' : 'bg-red-500'}`} />
-              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-                Step-by-Step Bio Link Builder
-              </span>
-            </div>
-            <p className="text-sm font-semibold text-zinc-900 flex items-center gap-1 font-mono">
-              {profile.username ? <>linkme.to/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-50 border border-zinc-200 text-zinc-800 px-3.5 py-2 rounded-xl text-xs font-semibold hover:border-zinc-300 hover:bg-zinc-100 transition active:scale-95 shadow-2xs cursor-pointer"
-            >
-              {copied ? (
-                <>
-                  <Check size={14} className="text-emerald-600 stroke-[2.5]" />
-                  <span className="text-emerald-700">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={14} className="text-zinc-500" />
-                  <span>Copy Link</span>
-                </>
-              )}
-            </button>
-            <Link
-              to={profile.username ? `/p/${profile.username}` : '/portfolio'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-900 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-zinc-800 transition shadow-2xs"
-            >
-              <span>View Portfolio</span>
-              <ExternalLink size={13} className="text-zinc-400" />
-            </Link>
-          </div>
-        </section>
-
-        {/* Stepper Header Bar */}
-        <StepperHeader
-          currentStep={currentStep}
-          onSelectStep={(stepId) => setCurrentStep(stepId)}
-        />
-
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
         {/* Mobile Toggle Tabs */}
-        <div className="flex lg:hidden mb-5 p-1 bg-zinc-200/80 rounded-xl shadow-inner">
+        <div className="flex lg:hidden mb-5 p-1 bg-zinc-100 border border-zinc-200 rounded-xl">
           <button
             type="button"
             onClick={() => setMobileViewTab('editor')}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${mobileViewTab === 'editor'
-              ? 'bg-white text-zinc-900 shadow-2xs'
+              ? 'bg-white text-zinc-900 shadow-sm'
               : 'text-zinc-600 hover:text-zinc-900'
               }`}
           >
@@ -153,7 +102,7 @@ export default function Home() {
             type="button"
             onClick={() => setMobileViewTab('preview')}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${mobileViewTab === 'preview'
-              ? 'bg-white text-zinc-900 shadow-2xs'
+              ? 'bg-white text-zinc-900 shadow-sm'
               : 'text-zinc-600 hover:text-zinc-900'
               }`}
           >
@@ -162,10 +111,61 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Main 2-Column Split: Step Wizard (Left) & Realtime Preview (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Builder on the left, live phone preview on the right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           {/* Step Form Column */}
           <div className={`lg:col-span-7 space-y-6 ${mobileViewTab === 'preview' ? 'hidden lg:block' : ''}`}>
+
+            {/* Top Banner Bar */}
+            <section className="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full animate-pulse ${profile.isPublic ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                    Step-by-Step Bio Link Builder
+                  </span>
+                </div>
+                <p className="text-sm font-semibold text-zinc-900 flex items-center gap-1 font-mono">
+                  {profile.username ? <>linkme.to/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-50 border border-zinc-200 text-zinc-800 px-3.5 py-2 rounded-xl text-xs font-semibold hover:border-zinc-300 hover:bg-zinc-100 transition active:scale-95 shadow-2xs cursor-pointer"
+                >
+                  {copied ? (
+                    <>
+                      <Check size={14} className="text-emerald-600 stroke-[2.5]" />
+                      <span className="text-emerald-700">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={14} className="text-zinc-500" />
+                      <span>Copy Link</span>
+                    </>
+                  )}
+                </button>
+                <Link
+                  to={profile.username ? `/p/${profile.username}` : '/portfolio'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-900 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-zinc-800 transition shadow-2xs"
+                >
+                  <span>View Portfolio</span>
+                  <ExternalLink size={13} className="text-zinc-400" />
+                </Link>
+              </div>
+            </section>
+
+            {/* Stepper Header Bar */}
+            <StepperHeader
+              currentStep={currentStep}
+              onSelectStep={(stepId) => setCurrentStep(stepId)}
+            />
+
 
             {/* Step 1: Profile & Handle */}
             {currentStep === 1 && (
@@ -248,7 +248,7 @@ export default function Home() {
                     disabled={loading || saving}
                     className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
                   >
-                    <span>{saving ? 'Saving…' : loading ? 'Loading…' : `Next: ${WIZARD_STEPS[currentStep]?.title}`}</span>
+                    <span>{saving ? 'Saving…' : loading ? 'Loading…' : `Save & Next: ${WIZARD_STEPS[currentStep]?.title}`}</span>
                     <ChevronRight size={16} />
                   </button>
                 ) : (
@@ -269,7 +269,7 @@ export default function Home() {
           </div>
 
           {/* Sticky Device Preview Column */}
-          <div className={`lg:col-span-5 lg:sticky lg:top-24 ${mobileViewTab === 'editor' ? 'hidden lg:block' : ''}`}>
+          <div className={`lg:col-span-5 lg:sticky lg:top-20 lg:h-[calc(100dvh-6rem)] ${mobileViewTab === 'editor' ? 'hidden lg:block' : ''}`}>
             <DevicePreview profile={profile} />
           </div>
         </div>

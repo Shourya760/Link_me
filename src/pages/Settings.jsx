@@ -34,7 +34,7 @@ export default function Settings() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (saveError) {
-      setError(saveError.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setSaving(false);
     }
@@ -111,14 +111,12 @@ export default function Settings() {
               <button
                 type="button"
                 onClick={() => setIsPublic(!isPublic)}
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isPublic ? 'bg-zinc-900' : 'bg-zinc-200'
-                }`}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isPublic ? 'bg-zinc-900' : 'bg-zinc-200'
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                    isPublic ? 'translate-x-4' : 'translate-x-0'
-                  }`}
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${isPublic ? 'translate-x-4' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
