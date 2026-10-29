@@ -10,7 +10,9 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('linkme_token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
@@ -26,10 +28,13 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('linkme_token');
-      localStorage.removeItem('linkme_profile');
-      if (!['/login', '/register'].includes(window.location.pathname)) {
-        window.location.replace('/login');
+      const isPublicEndpoint = error.config?.url?.includes('/profiles/') && !error.config?.url?.includes('/profiles/me');
+      if (!isPublicEndpoint) {
+        localStorage.removeItem('linkme_token');
+        localStorage.removeItem('linkme_profile');
+        if (!['/login', '/register'].includes(window.location.pathname)) {
+          window.location.replace('/login');
+        }
       }
     }
     return Promise.reject(error);

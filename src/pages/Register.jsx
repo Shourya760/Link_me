@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useProfile } from '../Context/ProfileContext';
-import { registerUser as registerAccount } from '../Services/userServices';
+import { useProfile } from '../context/ProfileContext';
+import { registerUser as registerAccount } from '../services/userServices';
+import { getPortfolioHost } from '../utils/portfolioUrl';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -73,7 +74,7 @@ export default function Register() {
                 Desired Username
               </label>
               <div className="flex items-center rounded-xl border border-zinc-200 focus-within:border-zinc-900 px-3.5 py-2.5 text-sm">
-                <span className="text-zinc-400 select-none">linkme-k4qb.onrender.com/</span>
+                <span className="text-zinc-400 select-none">{getPortfolioHost()}/</span>
                 <input
                   type="text"
                   required
@@ -115,9 +116,10 @@ export default function Register() {
 
             <button
               type="submit"
-              className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-zinc-800 active:scale-[0.99] transition shadow-xs"
+              disabled={loading}
+              className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-zinc-800 active:scale-[0.99] transition shadow-xs disabled:opacity-50 cursor-pointer"
             >
-              Create My Link
+              {loading ? 'Creating Account...' : 'Create My Link'}
             </button>
           </form>
 

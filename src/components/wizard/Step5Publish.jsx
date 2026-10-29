@@ -11,7 +11,7 @@ import {
 import { FaWhatsapp, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { THEMES } from '../../utils/storage';
-import { getPortfolioUrl } from '../../utils/portfolioUrl';
+import { getPortfolioUrl, getPortfolioHost } from '../../utils/portfolioUrl';
 
 export default function Step5Publish({ profile }) {
   const [copied, setCopied] = useState(false);
@@ -68,7 +68,7 @@ export default function Step5Publish({ profile }) {
         <div>
           <p className="text-xs text-zinc-400 mb-1">Your Unique Portfolio URL</p>
           <div className="text-lg sm:text-2xl font-bold font-mono tracking-tight text-white flex items-center gap-1 flex-wrap">
-            <span>linkme-k4qb.onrender.com/</span>
+            <span>{getPortfolioHost()}/</span>
             <span className="text-emerald-400 underline decoration-emerald-500/50 underline-offset-4">
               {profile.username || 'Choose a username'}
             </span>
@@ -240,7 +240,7 @@ export default function Step5Publish({ profile }) {
             </div>
 
             <p className="text-xs font-mono font-medium text-zinc-600">
-              linkme-k4qb.onrender.com/{profile.username}
+              {getPortfolioHost()}/{profile.username}
             </p>
 
             <div className="flex gap-2 pt-2">

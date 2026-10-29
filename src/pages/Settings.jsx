@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { useProfile } from '../Context/ProfileContext';
+import { useProfile } from '../context/ProfileContext';
 import Navbar from '../components/Navbar';
-import { updateMyProfile } from '../Services/profileServices';
+import { updateMyProfile } from '../services/profileServices';
+import { getPortfolioHost } from '../utils/portfolioUrl';
 
 export default function Settings() {
   const { profile, updateProfile, resetToDefault, logout } = useProfile();
@@ -33,7 +34,7 @@ export default function Settings() {
       updateProfile(savedProfile);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (saveError) {
+    } catch (err) {
       setError(err.response?.data?.message || err.message);
     } finally {
       setSaving(false);
@@ -78,7 +79,7 @@ export default function Settings() {
                 Your Public Portfolio Link
               </label>
               <div className="flex items-center rounded-xl border border-zinc-200 focus-within:border-zinc-900 px-3.5 py-2 text-sm bg-zinc-50">
-                <span className="text-zinc-400 select-none">linkme-k4qb.onrender.com/</span>
+                <span className="text-zinc-400 select-none">{getPortfolioHost()}/</span>
                 <input
                   type="text"
                   value={username}

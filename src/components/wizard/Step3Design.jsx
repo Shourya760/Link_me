@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Palette, Sparkles, Sliders } from 'lucide-react';
+import { Check, Sliders } from 'lucide-react';
 import { THEMES, COLOR_PRESETS, BUTTON_STYLES, FONT_STYLES } from '../../utils/storage';
 
 export default function Step3Design({ profile, updateTheme }) {

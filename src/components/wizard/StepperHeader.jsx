@@ -16,7 +16,7 @@ export const WIZARD_STEPS = [
   { id: 5, title: 'Publish', subtitle: 'Share & QR', icon: Share2 }
 ];
 
-export default function StepperHeader({ currentStep, onSelectStep, maxReachedStep }) {
+export default function StepperHeader({ currentStep, onSelectStep }) {
   const progressPercent = Math.round(((currentStep - 1) / (WIZARD_STEPS.length - 1)) * 100);
 
   return (

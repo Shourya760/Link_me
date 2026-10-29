@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   ChevronRight,
   ChevronLeft,
@@ -9,7 +8,7 @@ import {
   Eye,
   RotateCcw
 } from 'lucide-react';
-import { useProfile } from '../Context/ProfileContext';
+import { useProfile } from '../context/ProfileContext';
 import Navbar from '../components/Navbar';
 import StepperHeader, { WIZARD_STEPS } from '../components/wizard/StepperHeader';
 import Step1Profile from '../components/wizard/Step1Profile';
@@ -18,7 +17,7 @@ import Step3Design from '../components/wizard/Step3Design';
 import Step4Photos from '../components/wizard/Step4Photos';
 import Step5Publish from '../components/wizard/Step5Publish';
 import DevicePreview from '../components/DevicePreview';
-import { getPortfolioUrl } from '../utils/portfolioUrl';
+import { getPortfolioUrl, getPortfolioHost } from '../utils/portfolioUrl';
 
 export default function Home() {
   const {
@@ -127,7 +126,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-zinc-900 flex items-center gap-1 font-mono">
-                  {profile.username ? <>linkme-k4qb.onrender.com/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
+                  {profile.username ? <>{getPortfolioHost()}/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
                 </p>
               </div>
 

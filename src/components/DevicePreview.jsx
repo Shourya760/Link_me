@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ExternalLink,
-  Star,
   Sparkles,
   Link as LinkIcon,
   BookOpen,
@@ -16,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import { FaXTwitter, FaShareNodes } from 'react-icons/fa6';
 import { THEMES, BUTTON_STYLES, FONT_STYLES, PLATFORMS } from '../utils/storage';
+import { getPortfolioHost } from '../utils/portfolioUrl';
 
 const SOCIAL_ICONS = {
   instagram: FaInstagram, youtube: FaYoutube, facebook: FaFacebook,
@@ -179,7 +179,7 @@ export default function DevicePreview({ profile }) {
 
                   <p className="text-[10px] text-zinc-400 font-mono mt-0.5">
                     {profile?.username
-                      ? `linkme-k4qb.onrender.com/${profile.username}`
+                      ? `${getPortfolioHost()}/${profile.username}`
                       : "Choose your username"}
                   </p>
 

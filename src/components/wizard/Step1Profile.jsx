@@ -1,5 +1,6 @@
-import { Upload, Sparkles, Check, Image as ImageIcon, RefreshCw } from 'lucide-react';
-import { uploadImage } from '../../Services/userServices';
+import { Upload, Sparkles } from 'lucide-react';
+import { uploadImage } from '../../services/userServices';
+import { getPortfolioHost } from '../../utils/portfolioUrl';
 
 const BIO_TEMPLATES = [
   "Designing minimalist interfaces and crafting open-source digital tools. Exploring AI and typography.",
@@ -41,7 +42,7 @@ export default function Step1Profile({ profile, updateProfile }) {
             Choose Your Public URL Handle
           </label>
           <div className="flex items-center rounded-xl border border-zinc-200 focus-within:border-zinc-900 bg-white px-3.5 py-2.5 text-sm shadow-2xs transition">
-            <span className="text-zinc-400 font-mono select-none">linkme-k4qb.onrender.com/</span>
+            <span className="text-zinc-400 font-mono select-none">{getPortfolioHost()}/</span>
             <input
               type="text"
               value={profile.username || ''}
@@ -54,7 +55,7 @@ export default function Step1Profile({ profile, updateProfile }) {
           </div>
           <p className="text-[11px] text-zinc-500 mt-1 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Visitors will access your portfolio via <span className="font-mono font-medium text-zinc-800">linkme-k4qb.onrender.com/{profile.username || 'username'}</span>
+            Visitors will access your portfolio via <span className="font-mono font-medium text-zinc-800">{getPortfolioHost()}/{profile.username || 'username'}</span>
           </p>
         </div>
       </div>

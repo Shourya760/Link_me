@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useProfile } from '../Context/ProfileContext';
-import { loginUser as loginAccount } from '../Services/userServices';
+import { useProfile } from '../context/ProfileContext';
+import { loginUser as loginAccount } from '../services/userServices';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -89,9 +89,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-zinc-800 active:scale-[0.99] transition shadow-xs"
+              disabled={loading}
+              className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-zinc-800 active:scale-[0.99] transition shadow-xs disabled:opacity-50 cursor-pointer"
             >
-              Sign In
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 
