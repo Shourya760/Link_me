@@ -13,7 +13,8 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); setLoading(true);
+    setError('');
+    setLoading(true);
     try {
       const result = await loginAccount({ email, password });
       if (!result?.token || !result?.user?.email) {
@@ -24,15 +25,13 @@ export default function Login() {
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Unable to sign in. Please try again.');
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
-      {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link to="/" className="inline-flex items-center gap-2 group mb-4">
           <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-bold text-base tracking-tight transition group-hover:scale-105">
@@ -42,22 +41,15 @@ export default function Login() {
             linkme<span className="text-zinc-400">.</span>
           </span>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-          Welcome back
-        </h1>
-        <p className="mt-1.5 text-xs text-zinc-500">
-          Enter your details to manage your personal portfolio link
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Welcome back</h1>
+        <p className="mt-1.5 text-xs text-zinc-500">Enter your details to manage your personal portfolio link</p>
       </div>
 
-      {/* Login Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white px-6 py-8 sm:p-8 border border-zinc-200/90 rounded-2xl shadow-xs space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-700 mb-1.5">
-                Email address
-              </label>
+              <label className="block text-xs font-medium text-zinc-700 mb-1.5">Email address</label>
               <input
                 type="email"
                 required
@@ -70,9 +62,7 @@ export default function Login() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-zinc-700">
-                  Password
-                </label>
+                <label className="block text-xs font-medium text-zinc-700">Password</label>
                 <a href="#forgot" onClick={(e) => e.preventDefault()} className="text-xs text-zinc-400 hover:text-zinc-800 transition">
                   Forgot?
                 </a>

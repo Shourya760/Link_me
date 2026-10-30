@@ -13,7 +13,6 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-zinc-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Brand */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-bold text-sm tracking-tight transition group-hover:scale-105">
             L
@@ -23,14 +22,11 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Links */}
         <nav className="flex items-center gap-1 sm:gap-2">
           <Link
             to="/"
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-              isActive('/') 
-                ? 'bg-zinc-100 text-zinc-900' 
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+              isActive('/') ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
             }`}
           >
             Home
@@ -39,14 +35,12 @@ export default function Navbar() {
           <Link
             to="/settings"
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-              isActive('/settings')
-                ? 'bg-zinc-100 text-zinc-900'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+              isActive('/settings') ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
             }`}
           >
             Settings
           </Link>
-          
+
           <a
             href={getPortfolioUrl(profile.username)}
             target="_blank"
@@ -69,7 +63,10 @@ export default function Navbar() {
                 @{profile.username}
               </Link>
               <button
-                onClick={async () => { await logout(); navigate('/login'); }}
+                onClick={async () => {
+                  await logout();
+                  navigate('/login');
+                }}
                 className="text-xs text-zinc-500 hover:text-zinc-900 px-2 py-1 transition cursor-pointer"
                 title="Sign out"
               >
@@ -78,16 +75,10 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Link
-                to="/login"
-                className="px-3 py-1.5 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition"
-              >
+              <Link to="/login" className="px-3 py-1.5 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition">
                 Login
               </Link>
-              <Link
-                to="/register"
-                className="px-3 py-1.5 text-sm font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-lg transition"
-              >
+              <Link to="/register" className="px-3 py-1.5 text-sm font-medium text-white bg-zinc-900 hover:bg-zinc-800 rounded-lg transition">
                 Create Account
               </Link>
             </div>

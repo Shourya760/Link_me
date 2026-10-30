@@ -7,22 +7,19 @@ const ProfileContext = createContext(null);
 
 export function ProfileProvider({ children }) {
   const [profile, setProfile] = useState(getStoredProfile);
-  const [loading, setLoading] = useState(Boolean(localStorage.getItem('linkme_token')));
+  const [loading, setLoading] = useState(() => Boolean(localStorage.getItem('linkme_token')));
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem('linkme_token')) {
-      setLoading(false);
-      return undefined;
-    }
+    if (!localStorage.getItem('linkme_token')) return;
 
     let cancelled = false;
     getMyProfile()
-      .then(({ profile: remoteProfile }) => {
+      .then(({ profile: remote }) => {
         if (cancelled) return;
-        const nextProfile = normalizeProfile({ ...remoteProfile, email: remoteProfile.email || getStoredProfile().email });
-        saveStoredProfile(nextProfile);
-        setProfile(nextProfile);
+        const next = normalizeProfile({ ...remote, email: remote.email || getStoredProfile().email });
+        saveStoredProfile(next);
+        setProfile(next);
       })
       .catch((error) => {
         if (!cancelled && error.status === 401) {
@@ -30,7 +27,9 @@ export function ProfileProvider({ children }) {
           setProfile(normalizeProfile(EMPTY_PROFILE));
         }
       })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
     return () => { cancelled = true; };
   }, []);
@@ -51,22 +50,19 @@ export function ProfileProvider({ children }) {
   };
 
   const updateProfile = (fields) => commitProfile({ ...profile, ...fields });
-  const updateList = (key, update) => commitProfile({
-    ...profile,
-    [key]: update(profile[key] || [])
-  });
+  const updateList = (key, updater) => commitProfile({ ...profile, [key]: updater(profile[key] || []) });
 
   const saveProfile = async () => {
     if (loading) throw new Error('Your profile is still loading. Please try again.');
     setSaving(true);
     try {
       const { email } = profile;
-      const excludedFields = ['email', 'isAuthenticated', 'userId', '_id', 'createdAt', 'updatedAt', '__v'];
+      const excluded = new Set(['email', 'isAuthenticated', 'userId', '_id', 'createdAt', 'updatedAt', '__v']);
       const profileData = Object.fromEntries(
-        Object.entries(profile).filter(([field]) => !excludedFields.includes(field))
+        Object.entries(profile).filter(([k]) => !excluded.has(k))
       );
-      const { profile: savedProfile } = await updateMyProfile(profileData);
-      const updated = normalizeProfile({ ...savedProfile, email });
+      const { profile: saved } = await updateMyProfile(profileData);
+      const updated = normalizeProfile({ ...saved, email });
       commitProfile(updated);
       return updated;
     } finally {
@@ -84,72 +80,68 @@ export function ProfileProvider({ children }) {
   };
 
   const addCustomLink = (link) => {
-    const newLink = {
+    const item = {
       id: Date.now().toString(),
       title: link.title || 'My Featured Link',
       url: link.url || 'https://',
       subtitle: link.subtitle || '',
       highlight: Boolean(link.highlight),
-      icon: link.icon || 'link'
+      icon: link.icon || 'link',
     };
-    updateList('customLinks', (links) => [...links, newLink]);
+    updateList('customLinks', (links) => [...links, item]);
   };
 
   const updateCustomLink = (id, fields) => {
-    updateList('customLinks', (links) => links.map((item) => item.id === id ? { ...item, ...fields } : item));
+    updateList('customLinks', (links) => links.map((l) => (l.id === id ? { ...l, ...fields } : l)));
   };
 
   const removeCustomLink = (id) => {
-    updateList('customLinks', (links) => links.filter((item) => item.id !== id));
+    updateList('customLinks', (links) => links.filter((l) => l.id !== id));
   };
 
   const addPhoto = (photo) => {
-    const newPhoto = {
+    const item = {
       id: Date.now().toString(),
       url: photo.url,
       title: photo.title || 'Featured Work',
       caption: photo.caption || '',
-      link: photo.link || ''
+      link: photo.link || '',
     };
-    updateList('photos', (photos) => [...photos, newPhoto]);
-  };
-
-  const updatePhoto = (id, fields) => {
-    updateList('photos', (photos) => photos.map((photo) => photo.id === id ? { ...photo, ...fields } : photo));
+    updateList('photos', (photos) => [...photos, item]);
   };
 
   const removePhoto = (id) => {
-    updateList('photos', (photos) => photos.filter((photo) => photo.id !== id));
+    updateList('photos', (photos) => photos.filter((p) => p.id !== id));
   };
 
   const addInterest = (interest) => {
     const trimmed = interest.trim();
     if (!trimmed) return;
-    updateList('interests', (items) => items.includes(trimmed) ? items : [...items, trimmed]);
+    updateList('interests', (items) => (items.includes(trimmed) ? items : [...items, trimmed]));
   };
 
   const removeInterest = (interest) => {
-    updateList('interests', (items) => items.filter((item) => item !== interest));
+    updateList('interests', (items) => items.filter((i) => i !== interest));
   };
 
   const addAchievement = (title, year) => {
-    if (!title.trim()) return;
+    const t = title.trim();
+    if (!t) return;
     const item = {
       id: Date.now().toString(),
-      title: title.trim(),
-      year: year.trim() || new Date().getFullYear().toString()
+      title: t,
+      year: year.trim() || new Date().getFullYear().toString(),
     };
     updateList('achievements', (items) => [item, ...items]);
   };
 
   const removeAchievement = (id) => {
-    updateList('achievements', (items) => items.filter((item) => item.id !== id));
+    updateList('achievements', (items) => items.filter((a) => a.id !== id));
   };
 
   const login = (email, serverProfile) => {
     const updated = normalizeProfile({ ...(serverProfile || EMPTY_PROFILE), email: email || '', isAuthenticated: true });
-    setProfile(updated);
-    saveStoredProfile(updated);
+    commitProfile(updated);
   };
 
   const register = (name, username, email, serverProfile) => {
@@ -159,57 +151,57 @@ export function ProfileProvider({ children }) {
       name: name || profile.name,
       username: username || profile.username,
       email: email || profile.email,
-      isAuthenticated: true
+      isAuthenticated: true,
     };
-    setProfile(updated);
-    saveStoredProfile(updated);
+    commitProfile(updated);
   };
 
   const logout = async () => {
-    try { await logoutRequest(); } catch { /* clear local session even if the API is unavailable */ }
+    try { await logoutRequest(); } catch { /* ignore network error on logout */ }
     localStorage.removeItem('linkme_token');
-    const updated = normalizeProfile(EMPTY_PROFILE);
-    setProfile(updated);
     localStorage.removeItem('linkme_profile');
+    setProfile(normalizeProfile(EMPTY_PROFILE));
     window.dispatchEvent(new Event(EVENT_NAME));
   };
 
   const resetToDefault = () => {
-    const clearedProfile = normalizeProfile({
+    const cleared = normalizeProfile({
       ...EMPTY_PROFILE,
       username: profile.username,
       email: profile.email,
     });
-    setProfile(clearedProfile);
-    saveStoredProfile(clearedProfile);
+    commitProfile(cleared);
   };
 
-  const value = {
-    profile,
-    loading,
-    saving,
-    saveProfile,
-    updateProfile,
-    updateTheme,
-    updateSocial,
-    toggleSocial,
-    addCustomLink,
-    updateCustomLink,
-    removeCustomLink,
-    addPhoto,
-    updatePhoto,
-    removePhoto,
-    addInterest,
-    removeInterest,
-    addAchievement,
-    removeAchievement,
-    login,
-    register,
-    logout,
-    resetToDefault
-  };
-
-  return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;
+  return (
+    <ProfileContext.Provider
+      value={{
+        profile,
+        loading,
+        saving,
+        saveProfile,
+        updateProfile,
+        updateTheme,
+        updateSocial,
+        toggleSocial,
+        addCustomLink,
+        updateCustomLink,
+        removeCustomLink,
+        addPhoto,
+        removePhoto,
+        addInterest,
+        removeInterest,
+        addAchievement,
+        removeAchievement,
+        login,
+        register,
+        logout,
+        resetToDefault,
+      }}
+    >
+      {children}
+    </ProfileContext.Provider>
+  );
 }
 
 export function useProfile() {

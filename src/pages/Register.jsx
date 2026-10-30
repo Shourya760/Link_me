@@ -16,24 +16,22 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError(''); setLoading(true);
+    setError('');
+    setLoading(true);
     try {
       const result = await registerAccount({ name, username, email, password });
-
       localStorage.setItem('linkme_token', result.token);
       register(name, username.toLowerCase(), email, result.profile);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || err.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
-      {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link to="/" className="inline-flex items-center gap-2 group mb-4">
           <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-bold text-base tracking-tight transition group-hover:scale-105">
@@ -43,22 +41,15 @@ export default function Register() {
             linkme<span className="text-zinc-400">.</span>
           </span>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-          Claim your portfolio link
-        </h1>
-        <p className="mt-1.5 text-xs text-zinc-500">
-          Create a minimalist bio portfolio to share on Instagram, X, and YouTube
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Claim your portfolio link</h1>
+        <p className="mt-1.5 text-xs text-zinc-500">Create a minimalist bio portfolio to share on Instagram, X, and YouTube</p>
       </div>
 
-      {/* Register Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white px-6 py-8 sm:p-8 border border-zinc-200/90 rounded-2xl shadow-xs space-y-6">
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-700 mb-1.5">
-                Full Name
-              </label>
+              <label className="block text-xs font-medium text-zinc-700 mb-1.5">Full Name</label>
               <input
                 type="text"
                 required
@@ -70,9 +61,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-700 mb-1.5">
-                Desired Username
-              </label>
+              <label className="block text-xs font-medium text-zinc-700 mb-1.5">Desired Username</label>
               <div className="flex items-center rounded-xl border border-zinc-200 focus-within:border-zinc-900 px-3.5 py-2.5 text-sm">
                 <span className="text-zinc-400 select-none">{getPortfolioHost()}/</span>
                 <input
@@ -87,9 +76,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-700 mb-1.5">
-                Email address
-              </label>
+              <label className="block text-xs font-medium text-zinc-700 mb-1.5">Email address</label>
               <input
                 type="email"
                 required
@@ -101,9 +88,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-700 mb-1.5">
-                Password
-              </label>
+              <label className="block text-xs font-medium text-zinc-700 mb-1.5">Password</label>
               <input
                 type="password"
                 required

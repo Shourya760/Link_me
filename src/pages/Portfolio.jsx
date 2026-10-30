@@ -1,39 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import {
-  Check,
-  Copy,
-  ExternalLink,
-  ArrowLeft,
-  Star,
-  QrCode,
-  Download,
-  BookOpen,
-  Calendar,
-  Code,
-  ShoppingBag,
-  Sparkles,
-  Link as LinkIcon,
-  UserX
-} from 'lucide-react';
-import {
-  FaInstagram, FaYoutube, FaFacebook, FaLinkedin, FaGithub, FaTiktok,
-  FaSpotify, FaDiscord, FaTwitch, FaWhatsapp, FaTelegram, FaEnvelope,
-  FaGlobe, FaBehance, FaDribbble
-} from 'react-icons/fa';
-import { FaXTwitter, FaShareNodes } from 'react-icons/fa6';
+import { Check, Copy, ExternalLink, ArrowLeft, Star, QrCode, Sparkles, UserX } from 'lucide-react';
+import { FaShareNodes } from 'react-icons/fa6';
 import { useProfile } from '../context/ProfileContext';
 import { THEMES, BUTTON_STYLES, FONT_STYLES, PLATFORMS } from '../utils/storage';
 import { getPublicProfile } from '../services/profileServices';
 import { getPortfolioUrl, getPortfolioHost } from '../utils/portfolioUrl';
-
-const SOCIAL_ICONS = {
-  instagram: FaInstagram, youtube: FaYoutube, facebook: FaFacebook,
-  x: FaXTwitter, linkedin: FaLinkedin, github: FaGithub, tiktok: FaTiktok,
-  spotify: FaSpotify, discord: FaDiscord, twitch: FaTwitch,
-  whatsapp: FaWhatsapp, telegram: FaTelegram, email: FaEnvelope,
-  website: FaGlobe, behance: FaBehance, dribbble: FaDribbble
-};
+import { SOCIAL_ICONS, getSocialUrl, getCustomLinkIcon } from '../utils/socials';
+import QrModal from '../components/QrModal';
 
 export default function Portfolio() {
   const { username } = useParams();
@@ -43,49 +17,38 @@ export default function Portfolio() {
   const [publicProfileError, setPublicProfileError] = useState('');
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
-  const [selectedPhotoModal, setSelectedPhotoModal] = useState(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  // Check if visitor is the owner of this profile
-  const isOwner = Boolean(
-    localProfile.isAuthenticated &&
-    (!username || (localProfile.username && username.toLowerCase() === localProfile.username.toLowerCase()))
-  );
+  const isSelf = !username || (localProfile.username && username.toLowerCase() === localProfile.username.toLowerCase());
+  const isOwner = Boolean(localProfile.isAuthenticated && isSelf);
 
   useEffect(() => {
-    // If no username in URL (/portfolio) or viewing own username while logged in
-    if (!username || (localProfile.username && username.toLowerCase() === localProfile.username.toLowerCase())) {
-      setRemoteProfile(null);
-      setPublicProfileError('');
-      setIsLoading(false);
-      return;
-    }
+    if (isSelf) return;
 
     let cancelled = false;
     setIsLoading(true);
     setPublicProfileError('');
 
     getPublicProfile(username)
-      .then(({ profile: fetchedProfile }) => {
+      .then(({ profile: fetched }) => {
         if (!cancelled) {
-          setRemoteProfile(fetchedProfile);
+          setRemoteProfile(fetched);
           setIsLoading(false);
         }
       })
       .catch((error) => {
         if (!cancelled) {
-          const msg = error.response?.data?.message || 'Portfolio not found';
-          setPublicProfileError(msg);
+          setPublicProfileError(error.response?.data?.message || 'Portfolio not found');
           setIsLoading(false);
         }
       });
 
     return () => { cancelled = true; };
-  }, [username, localProfile.username]);
+  }, [username, isSelf]);
 
-  const profile = remoteProfile || localProfile;
+  const profile = (isSelf ? localProfile : remoteProfile) || localProfile;
   const portfolioHost = getPortfolioHost();
   const shareUrl = getPortfolioUrl(profile?.username || username);
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(shareUrl)}&margin=10`;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl);
@@ -93,54 +56,17 @@ export default function Portfolio() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const activeTheme = THEMES.find(t => t.id === profile?.theme?.id) || THEMES[0];
-  const activeButtonStyle = BUTTON_STYLES.find(b => b.id === profile?.theme?.buttonStyle) || BUTTON_STYLES[1];
-  const activeFontStyle = FONT_STYLES.find(f => f.id === profile?.theme?.fontStyle) || FONT_STYLES[0];
-  const accentColor = profile?.theme?.accentColor || activeTheme.accentColor;
+  const theme = THEMES.find((t) => t.id === profile?.theme?.id) || THEMES[0];
+  const btnStyle = BUTTON_STYLES.find((b) => b.id === profile?.theme?.buttonStyle) || BUTTON_STYLES[1];
+  const fontStyle = FONT_STYLES.find((f) => f.id === profile?.theme?.fontStyle) || FONT_STYLES[0];
+  const accentColor = profile?.theme?.accentColor || theme.accentColor;
+  const activeSocials = PLATFORMS.filter((p) => profile?.socials?.[p.id]?.trim());
 
-  // Active socials
-  const activeSocials = PLATFORMS.filter(p => profile?.socials?.[p.id]?.trim());
+  const isPill = btnStyle.id === 'pill';
+  const isSquare = btnStyle.id === 'square';
+  const isOutline = btnStyle.id === 'outline';
+  const linkShape = isPill ? 'rounded-full px-5' : isSquare ? 'rounded-lg' : isOutline ? 'rounded-2xl border-2' : 'rounded-2xl';
 
-  const getCustomLinkIcon = (iconName) => {
-    switch (iconName) {
-      case 'book': return <BookOpen size={16} />;
-      case 'calendar': return <Calendar size={16} />;
-      case 'code': return <Code size={16} />;
-      case 'shop': return <ShoppingBag size={16} />;
-      case 'sparkles': return <Sparkles size={16} />;
-      default: return <LinkIcon size={16} />;
-    }
-  };
-
-  const getSocialUrl = (platformId, val) => {
-    if (!val) return '#';
-    if (val.startsWith('http://') || val.startsWith('https://')) return val;
-    switch (platformId) {
-      case 'x': return `https://x.com/${val.replace('@', '')}`;
-      case 'instagram': return `https://instagram.com/${val.replace('@', '')}`;
-      case 'youtube': return val.startsWith('@') ? `https://youtube.com/${val}` : `https://youtube.com/@${val}`;
-      case 'linkedin': return `https://linkedin.com/in/${val}`;
-      case 'github': return `https://github.com/${val}`;
-      case 'tiktok': return `https://tiktok.com/@${val.replace('@', '')}`;
-      case 'spotify': return `https://open.spotify.com/user/${val}`;
-      case 'discord': return `https://discord.gg/${val}`;
-      case 'twitch': return `https://twitch.tv/${val}`;
-      case 'whatsapp': return `https://wa.me/${val.replace(/[^0-9]/g, '')}`;
-      case 'telegram': return `https://t.me/${val.replace('@', '')}`;
-      case 'email': return `mailto:${val}`;
-      case 'behance': return `https://behance.net/${val}`;
-      case 'dribbble': return `https://dribbble.com/${val}`;
-      case 'facebook': return `https://facebook.com/${val}`;
-      case 'website': return val.startsWith('http') ? val : `https://${val}`;
-      default: return `https://${val}`;
-    }
-  };
-
-  const isPill = activeButtonStyle.id === 'pill';
-  const isSquare = activeButtonStyle.id === 'square';
-  const isOutline = activeButtonStyle.id === 'outline';
-
-  // 1. Loading State Screen
   if (isLoading || (!username && localLoading)) {
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
@@ -167,90 +93,38 @@ export default function Portfolio() {
     );
   }
 
-  // 2. Not Found Error State Screen
-  if (publicProfileError) {
+  if (publicProfileError || (!username && !localProfile.username && !localProfile.name)) {
+    const isNotFound = Boolean(publicProfileError);
     return (
       <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center p-6 text-center">
         <div className="max-w-md w-full bg-white border border-zinc-200/90 rounded-3xl p-8 sm:p-10 shadow-xl space-y-5">
-          <div className="w-16 h-16 rounded-2xl bg-zinc-100 text-zinc-600 flex items-center justify-center mx-auto">
-            <UserX size={32} />
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto ${isNotFound ? 'bg-zinc-100 text-zinc-600' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+            {isNotFound ? <UserX size={32} /> : <Sparkles size={30} />}
           </div>
-
           <div className="space-y-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
-              Portfolio Not Found
+              {isNotFound ? 'Portfolio Not Found' : 'Build Your LinkMe Portfolio'}
             </h1>
             <p className="text-sm text-zinc-500 leading-relaxed">
-              We couldn't find a portfolio for{' '}
-              <span className="font-mono font-semibold text-zinc-800">@{username}</span>.
-              This link might be private, inactive, or the handle has not been registered yet.
+              {isNotFound ? (
+                <>We couldn't find a portfolio for <span className="font-mono font-semibold text-zinc-800">@{username}</span>. This link might be private, inactive, or not registered yet.</>
+              ) : (
+                'No portfolio was specified. Create your free link in bio to showcase your work, socials, and links in minutes.'
+              )}
             </p>
           </div>
-
           <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-            <Link
-              to="/register"
-              className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-xs"
-            >
-              Claim @{username || 'handle'}
+            <Link to="/register" className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-xs">
+              {isNotFound ? `Claim @${username || 'handle'}` : 'Create Free Portfolio'}
             </Link>
-            <Link
-              to="/"
-              className="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 py-2.5 px-4 rounded-xl text-xs font-semibold transition"
-            >
-              Back to Home
+            <Link to={isNotFound ? '/' : '/login'} className="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 py-2.5 px-4 rounded-xl text-xs font-semibold transition">
+              {isNotFound ? 'Back to Home' : 'Sign In'}
             </Link>
           </div>
         </div>
-
         <footer className="mt-8">
           <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-600 transition">
-            <span>Powered by</span>
-            <span className="font-bold text-zinc-700">linkme.</span>
-          </Link>
-        </footer>
-      </div>
-    );
-  }
-
-  // 3. Fallback for /portfolio when user has no profile or username
-  if (!username && !localProfile.username && !localProfile.name) {
-    return (
-      <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center p-6 text-center">
-        <div className="max-w-md w-full bg-white border border-zinc-200/90 rounded-3xl p-8 sm:p-10 shadow-xl space-y-5">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100">
-            <Sparkles size={30} />
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
-              Build Your LinkMe Portfolio
-            </h1>
-            <p className="text-sm text-zinc-500 leading-relaxed">
-              No portfolio was specified. Create your free link in bio to showcase your work, socials, and links in minutes.
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-            <Link
-              to="/register"
-              className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2.5 px-4 rounded-xl text-xs font-bold transition shadow-xs"
-            >
-              Create Free Portfolio
-            </Link>
-            <Link
-              to="/login"
-              className="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 py-2.5 px-4 rounded-xl text-xs font-semibold transition"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-
-        <footer className="mt-8">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-600 transition">
-            <span>Powered by</span>
-            <span className="font-bold text-zinc-700">linkme.</span>
+            <span>Powered by</span><span className="font-bold text-zinc-700">linkme.</span>
           </Link>
         </footer>
       </div>
@@ -258,33 +132,21 @@ export default function Portfolio() {
   }
 
   return (
-    <div className={`min-h-screen ${activeTheme.pageBg} ${activeFontStyle.styleClass} py-8 px-4 sm:px-6 flex flex-col justify-between transition-colors duration-300`}>
-
-      {/* Top Floating Controls */}
+    <div className={`min-h-screen ${theme.pageBg} ${fontStyle.styleClass} py-8 px-4 sm:px-6 flex flex-col justify-between transition-colors duration-300`}>
       <div className="max-w-2xl w-full mx-auto flex items-center justify-between mb-8">
-        {isOwner ? (
-          <Link
-            to="/"
-            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-xs border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 hover:bg-white flex items-center gap-1.5 transition shadow-2xs"
-          >
-            <ArrowLeft size={14} />
-            <span>Edit Profile</span>
-          </Link>
-        ) : (
-          <Link
-            to="/"
-            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-xs border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 hover:bg-white flex items-center gap-1.5 transition shadow-2xs"
-          >
-            <span>linkme.</span>
-          </Link>
-        )}
+        <Link
+          to="/"
+          className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-xs border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 hover:bg-white flex items-center gap-1.5 transition shadow-2xs"
+        >
+          {isOwner && <ArrowLeft size={14} />}
+          <span>{isOwner ? 'Edit Profile' : 'linkme.'}</span>
+        </Link>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setShowQrModal(true)}
             className="flex items-center gap-1.5 text-xs font-medium bg-white/80 backdrop-blur-xs border border-zinc-200/80 px-3 py-1.5 rounded-full text-zinc-700 shadow-2xs hover:bg-white transition cursor-pointer"
-            title="Show QR Code"
           >
             <QrCode size={14} />
             <span className="hidden sm:inline">QR Code</span>
@@ -310,10 +172,7 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Main Portfolio Container Card */}
-      <main className={`max-w-xl w-full mx-auto ${activeTheme.cardBg} ${activeTheme.cardBorder} ${activeTheme.cardShadow} border rounded-3xl p-6 sm:p-10 shadow-lg space-y-8 transition-all duration-300`}>
-
-        {/* Profile Header */}
+      <main className={`max-w-xl w-full mx-auto ${theme.cardBg} ${theme.cardBorder} ${theme.cardShadow} border rounded-3xl p-6 sm:p-10 shadow-lg space-y-8 transition-all duration-300`}>
         <div className="text-center space-y-3">
           <div className="relative inline-block">
             {profile.avatar ? (
@@ -330,21 +189,17 @@ export default function Portfolio() {
                 {profile.name?.charAt(0) || 'U'}
               </div>
             )}
-            <span
-              className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-2xs"
-              title="Active Creator"
-            />
+            <span className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-2xs" />
           </div>
 
           <div>
             <div className="flex items-center justify-center gap-2">
-              <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight ${activeTheme.textColor}`}>
+              <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight ${theme.textColor}`}>
                 {profile.name || 'Your Name'}
               </h1>
               <span
                 className="text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5 shadow-2xs"
                 style={{ backgroundColor: `${accentColor}18`, color: accentColor }}
-                title="Verified Creator"
               >
                 ✓
               </span>
@@ -354,32 +209,21 @@ export default function Portfolio() {
               {profile.username ? `${portfolioHost}/${profile.username}` : 'Choose your username'}
             </p>
 
-            {profile.title && (
-              <p className={`text-sm font-semibold mt-2 leading-snug ${activeTheme.textColor} opacity-90`}>
-                {profile.title}
-              </p>
-            )}
-
-            {profile.bio && (
-              <p className={`text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed ${activeTheme.textColor}`}>
-                {profile.bio}
-              </p>
-            )}
+            {profile.title && <p className={`text-sm font-semibold mt-2 leading-snug ${theme.textColor} opacity-90`}>{profile.title}</p>}
+            {profile.bio && <p className={`text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed ${theme.textColor}`}>{profile.bio}</p>}
           </div>
 
-          {/* Social Icons Strip */}
           {activeSocials.length > 0 && (
             <div className="flex items-center justify-center flex-wrap gap-2 pt-3">
-              {activeSocials.map(platform => {
-                const val = profile.socials[platform.id];
+              {activeSocials.map((platform) => {
                 const Icon = SOCIAL_ICONS[platform.id] || FaShareNodes;
                 return (
                   <a
                     key={platform.id}
-                    href={getSocialUrl(platform.id, val)}
+                    href={getSocialUrl(platform.id, profile.socials[platform.id])}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition hover:scale-110 active:scale-95 ${activeTheme.textColor}`}
+                    className={`w-9 h-9 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition hover:scale-110 active:scale-95 ${theme.textColor}`}
                     title={platform.label}
                   >
                     <Icon size={16} />
@@ -390,22 +234,17 @@ export default function Portfolio() {
           )}
         </div>
 
-        {/* Custom Featured Links */}
-        {profile.customLinks && profile.customLinks.length > 0 && (
+        {profile.customLinks?.length > 0 && (
           <section className="space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
-              Featured Links & Actions
-            </h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">Featured Links & Actions</h2>
             <div className="space-y-2.5">
-              {profile.customLinks.map(link => (
+              {profile.customLinks.map((link) => (
                 <a
                   key={link.id}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block w-full p-3.5 text-left transition duration-200 group relative border shadow-2xs hover:scale-[1.01] active:scale-[0.99] ${
-                    isPill ? 'rounded-full px-5' : isSquare ? 'rounded-lg' : isOutline ? 'rounded-2xl border-2' : 'rounded-2xl'
-                  } ${link.highlight ? 'ring-2 ring-amber-400/60 shadow-md' : ''} ${activeTheme.cardBg} ${activeTheme.cardBorder}`}
+                  className={`block w-full p-3.5 text-left transition duration-200 group relative border shadow-2xs hover:scale-[1.01] active:scale-[0.99] ${linkShape} ${link.highlight ? 'ring-2 ring-amber-400/60 shadow-md' : ''} ${theme.cardBg} ${theme.cardBorder}`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3.5 min-w-0">
@@ -413,28 +252,21 @@ export default function Portfolio() {
                         className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition"
                         style={{
                           backgroundColor: link.highlight ? accentColor : `${accentColor}15`,
-                          color: link.highlight ? '#ffffff' : accentColor
+                          color: link.highlight ? '#ffffff' : accentColor,
                         }}
                       >
                         {getCustomLinkIcon(link.icon)}
                       </div>
                       <div className="min-w-0">
-                        <p className={`text-sm font-bold truncate ${activeTheme.textColor} group-hover:underline flex items-center gap-1.5`}>
+                        <p className={`text-sm font-bold truncate ${theme.textColor} group-hover:underline flex items-center gap-1.5`}>
                           <span>{link.title}</span>
                           {link.highlight && (
-                            <span className="text-[10px] bg-amber-400 text-zinc-950 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                              ★ Hot
-                            </span>
+                            <span className="text-[10px] bg-amber-400 text-zinc-950 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">★ Hot</span>
                           )}
                         </p>
-                        {link.subtitle && (
-                          <p className={`text-xs truncate ${activeTheme.textMuted} mt-0.5`}>
-                            {link.subtitle}
-                          </p>
-                        )}
+                        {link.subtitle && <p className={`text-xs truncate ${theme.textMuted} mt-0.5`}>{link.subtitle}</p>}
                       </div>
                     </div>
-
                     <ExternalLink size={15} className="text-zinc-400 group-hover:text-zinc-600 transition shrink-0 mr-1" />
                   </div>
                 </a>
@@ -443,35 +275,22 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* Visual Photos Showcase */}
-        {profile.photos && profile.photos.length > 0 && (
+        {profile.photos?.length > 0 && (
           <section className="space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
-              Visual Showcase & Media
-            </h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">Visual Showcase & Media</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {profile.photos.map(photo => (
+              {profile.photos.map((photo) => (
                 <div
                   key={photo.id}
-                  onClick={() => setSelectedPhotoModal(photo)}
-                  className={`group rounded-2xl border ${activeTheme.cardBorder} overflow-hidden bg-black/5 hover:shadow-md transition cursor-pointer`}
+                  onClick={() => setSelectedPhoto(photo)}
+                  className={`group rounded-2xl border ${theme.cardBorder} overflow-hidden bg-black/5 hover:shadow-md transition cursor-pointer`}
                 >
                   <div className="aspect-4/3 w-full overflow-hidden bg-zinc-200 relative">
-                    <img
-                      src={photo.url}
-                      alt={photo.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    />
+                    <img src={photo.url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
                   </div>
                   <div className="p-3">
-                    <p className={`text-xs font-bold truncate ${activeTheme.textColor}`}>
-                      {photo.title}
-                    </p>
-                    {photo.caption && (
-                      <p className={`text-[11px] truncate ${activeTheme.textMuted} mt-0.5`}>
-                        {photo.caption}
-                      </p>
-                    )}
+                    <p className={`text-xs font-bold truncate ${theme.textColor}`}>{photo.title}</p>
+                    {photo.caption && <p className={`text-[11px] truncate ${theme.textMuted} mt-0.5`}>{photo.caption}</p>}
                   </div>
                 </div>
               ))}
@@ -479,18 +298,12 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* Interests & Skills */}
-        {profile.interests && profile.interests.length > 0 && (
+        {profile.interests?.length > 0 && (
           <section className="space-y-2.5 text-center">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-              Interests & Focus
-            </h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Interests & Focus</h2>
             <div className="flex flex-wrap justify-center gap-1.5">
               {profile.interests.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className={`px-3 py-1 text-xs font-semibold rounded-full border ${activeTheme.badgeBg}`}
-                >
+                <span key={idx} className={`px-3 py-1 text-xs font-semibold rounded-full border ${theme.badgeBg}`}>
                   {tag}
                 </span>
               ))}
@@ -498,29 +311,17 @@ export default function Portfolio() {
           </section>
         )}
 
-        {/* Achievements */}
-        {profile.achievements && profile.achievements.length > 0 && (
+        {profile.achievements?.length > 0 && (
           <section className="space-y-2.5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">
-              Milestones & Recognition
-            </h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-center text-zinc-400">Milestones & Recognition</h2>
             <div className="space-y-2">
-              {profile.achievements.map(ach => (
-                <div
-                  key={ach.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border ${activeTheme.cardBorder} text-xs`}
-                >
+              {profile.achievements.map((ach) => (
+                <div key={ach.id} className={`flex items-center justify-between p-3 rounded-xl border ${theme.cardBorder} text-xs`}>
                   <div className="flex items-center gap-2 min-w-0">
                     <Star size={13} className="text-amber-500 fill-amber-500 shrink-0" />
-                    <span className={`font-semibold truncate ${activeTheme.textColor}`}>
-                      {ach.title}
-                    </span>
+                    <span className={`font-semibold truncate ${theme.textColor}`}>{ach.title}</span>
                   </div>
-                  {ach.year && (
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border shrink-0 ${activeTheme.badgeBg}`}>
-                      {ach.year}
-                    </span>
-                  )}
+                  {ach.year && <span className={`text-[10px] font-mono px-2 py-0.5 rounded border shrink-0 ${theme.badgeBg}`}>{ach.year}</span>}
                 </div>
               ))}
             </div>
@@ -528,90 +329,29 @@ export default function Portfolio() {
         )}
       </main>
 
-      {/* Footer Branding */}
       <footer className="text-center py-8">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-700 transition"
-        >
-          <span>Powered by</span>
-          <span className="font-bold text-zinc-800">linkme.</span>
-          <span>• Create your own free link</span>
+        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-700 transition">
+          <span>Powered by</span><span className="font-bold text-zinc-800">linkme.</span><span>• Create your own free link</span>
         </Link>
       </footer>
 
-      {/* QR Code Modal */}
-      {showQrModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-sm w-full text-center space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold text-zinc-900">QR Code for @{profile.username || username}</h4>
-              <button
-                type="button"
-                onClick={() => setShowQrModal(false)}
-                className="text-zinc-400 hover:text-zinc-700 text-lg font-bold p-1 cursor-pointer"
-              >
-                ×
-              </button>
-            </div>
+      <QrModal isOpen={showQrModal} onClose={() => setShowQrModal(false)} username={profile.username || username} />
 
-            <p className="text-xs text-zinc-500">
-              Scan with camera to open {profile.name || 'this'}'s linkme profile.
-            </p>
-
-            <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex justify-center">
-              <img
-                src={qrCodeUrl}
-                alt="QR Code"
-                className="w-48 h-48 rounded-xl shadow-xs"
-              />
-            </div>
-
-            <p className="text-xs font-mono font-medium text-zinc-600">
-              {portfolioHost}/{profile.username || username}
-            </p>
-
-            <div className="flex gap-2 pt-2">
-              <a
-                href={qrCodeUrl}
-                download={`linkme-${profile.username || username}-qr.png`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white py-2 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5"
-              >
-                <Download size={14} />
-                <span>Save Image</span>
-              </a>
-              <button
-                type="button"
-                onClick={() => setShowQrModal(false)}
-                className="px-4 py-2 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-xl text-xs font-semibold transition cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photo Lightbox Modal */}
-      {selectedPhotoModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedPhotoModal(null)}>
+      {selectedPhoto && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedPhoto(null)}>
           <div className="bg-white rounded-3xl overflow-hidden max-w-lg w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="aspect-4/3 w-full bg-zinc-950 overflow-hidden">
-              <img src={selectedPhotoModal.url} alt={selectedPhotoModal.title} className="w-full h-full object-contain" />
+              <img src={selectedPhoto.url} alt={selectedPhoto.title} className="w-full h-full object-contain" />
             </div>
             <div className="p-5 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-zinc-900">{selectedPhotoModal.title}</h3>
-                {selectedPhotoModal.caption && (
-                  <p className="text-xs text-zinc-500 mt-0.5">{selectedPhotoModal.caption}</p>
-                )}
+                <h3 className="text-sm font-bold text-zinc-900">{selectedPhoto.title}</h3>
+                {selectedPhoto.caption && <p className="text-xs text-zinc-500 mt-0.5">{selectedPhoto.caption}</p>}
               </div>
               <div className="flex items-center gap-2">
-                {selectedPhotoModal.link && (
+                {selectedPhoto.link && (
                   <a
-                    href={selectedPhotoModal.link}
+                    href={selectedPhoto.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition text-xs font-semibold flex items-center gap-1"
@@ -622,8 +362,8 @@ export default function Portfolio() {
                 )}
                 <button
                   type="button"
-                  onClick={() => setSelectedPhotoModal(null)}
-                  className="px-3 py-1.5 border border-zinc-200 rounded-xl text-xs font-semibold text-zinc-700 hover:bg-zinc-100 transition"
+                  onClick={() => setSelectedPhoto(null)}
+                  className="px-3 py-1.5 border border-zinc-200 rounded-xl text-xs font-semibold text-zinc-700 hover:bg-zinc-100 transition cursor-pointer"
                 >
                   Close
                 </button>

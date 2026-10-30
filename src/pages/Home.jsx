@@ -1,16 +1,9 @@
 import { useState } from 'react';
-import {
-  ChevronRight,
-  ChevronLeft,
-  ExternalLink,
-  Copy,
-  Check,
-  Eye,
-  RotateCcw
-} from 'lucide-react';
+import { ChevronRight, ChevronLeft, ExternalLink, Copy, Check, Eye, RotateCcw } from 'lucide-react';
 import { useProfile } from '../context/ProfileContext';
 import Navbar from '../components/Navbar';
-import StepperHeader, { WIZARD_STEPS } from '../components/wizard/StepperHeader';
+import StepperHeader from '../components/wizard/StepperHeader';
+import { WIZARD_STEPS } from '../utils/steps';
 import Step1Profile from '../components/wizard/Step1Profile';
 import Step2Links from '../components/wizard/Step2Links';
 import Step3Design from '../components/wizard/Step3Design';
@@ -33,17 +26,16 @@ export default function Home() {
     updateCustomLink,
     removeCustomLink,
     addPhoto,
-    updatePhoto,
     removePhoto,
     addInterest,
     removeInterest,
     addAchievement,
     removeAchievement,
-    resetToDefault
+    resetToDefault,
   } = useProfile();
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [mobileViewTab, setMobileViewTab] = useState('editor'); // 'editor' | 'preview'
+  const [mobileViewTab, setMobileViewTab] = useState('editor');
   const [copied, setCopied] = useState(false);
   const [saveError, setSaveError] = useState('');
 
@@ -69,13 +61,13 @@ export default function Home() {
 
   const handlePrev = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleReset = () => {
-    if (window.confirm("Clear your profile content? Your username and email will stay.")) {
+    if (window.confirm('Clear your profile content? Your username and email will stay.')) {
       resetToDefault();
       setCurrentStep(1);
     }
@@ -86,37 +78,30 @@ export default function Home() {
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
-        {/* Mobile Toggle Tabs */}
         <div className="flex lg:hidden mb-5 p-1 bg-zinc-100 border border-zinc-200 rounded-xl">
           <button
             type="button"
             onClick={() => setMobileViewTab('editor')}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${mobileViewTab === 'editor'
-              ? 'bg-white text-zinc-900 shadow-sm'
-              : 'text-zinc-600 hover:text-zinc-900'
-              }`}
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+              mobileViewTab === 'editor' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
           >
             Step {currentStep} Form
           </button>
           <button
             type="button"
             onClick={() => setMobileViewTab('preview')}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${mobileViewTab === 'preview'
-              ? 'bg-white text-zinc-900 shadow-sm'
-              : 'text-zinc-600 hover:text-zinc-900'
-              }`}
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${
+              mobileViewTab === 'preview' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
           >
             <Eye size={14} />
             <span>Live Card Preview</span>
           </button>
         </div>
 
-        {/* Builder on the left, live phone preview on the right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-          {/* Step Form Column */}
           <div className={`lg:col-span-7 space-y-6 ${mobileViewTab === 'preview' ? 'hidden lg:block' : ''}`}>
-
-            {/* Top Banner Bar */}
             <section className="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
@@ -126,7 +111,11 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-zinc-900 flex items-center gap-1 font-mono">
-                  {profile.username ? <>{getPortfolioHost()}/<span className="text-zinc-600">{profile.username}</span></> : 'Choose your username'}
+                  {profile.username ? (
+                    <>{getPortfolioHost()}/<span className="text-zinc-600">{profile.username}</span></>
+                  ) : (
+                    'Choose your username'
+                  )}
                 </p>
               </div>
 
@@ -160,22 +149,10 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Stepper Header Bar */}
-            <StepperHeader
-              currentStep={currentStep}
-              onSelectStep={(stepId) => setCurrentStep(stepId)}
-            />
+            <StepperHeader currentStep={currentStep} onSelectStep={(stepId) => setCurrentStep(stepId)} />
 
+            {currentStep === 1 && <Step1Profile profile={profile} updateProfile={updateProfile} />}
 
-            {/* Step 1: Profile & Handle */}
-            {currentStep === 1 && (
-              <Step1Profile
-                profile={profile}
-                updateProfile={updateProfile}
-              />
-            )}
-
-            {/* Step 2: Links & Social Platforms */}
             {currentStep === 2 && (
               <Step2Links
                 profile={profile}
@@ -187,15 +164,8 @@ export default function Home() {
               />
             )}
 
-            {/* Step 3: Design, Colors & Appearance */}
-            {currentStep === 3 && (
-              <Step3Design
-                profile={profile}
-                updateTheme={updateTheme}
-              />
-            )}
+            {currentStep === 3 && <Step3Design profile={profile} updateTheme={updateTheme} />}
 
-            {/* Step 4: Photos, Media & Milestones */}
             {currentStep === 4 && (
               <Step4Photos
                 profile={profile}
@@ -208,14 +178,8 @@ export default function Home() {
               />
             )}
 
-            {/* Step 5: Review & Publish */}
-            {currentStep === 5 && (
-              <Step5Publish
-                profile={profile}
-              />
-            )}
+            {currentStep === 5 && <Step5Publish profile={profile} />}
 
-            {/* Bottom Wizard Footer Navigation */}
             <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-3 shadow-2xs">
               <div>
                 {currentStep > 1 ? (
@@ -246,7 +210,7 @@ export default function Home() {
                     type="button"
                     onClick={handleNext}
                     disabled={loading || saving}
-                    className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                    className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer active:scale-95 disabled:opacity-50"
                   >
                     <span>{saving ? 'Saving…' : loading ? 'Loading…' : `Save & Next: ${WIZARD_STEPS[currentStep]?.title}`}</span>
                     <ChevronRight size={16} />
@@ -265,10 +229,8 @@ export default function Home() {
               </div>
             </div>
             {saveError && <p role="alert" className="text-sm text-red-600">{saveError}</p>}
-
           </div>
 
-          {/* Sticky Device Preview Column */}
           <div className={`lg:col-span-5 lg:sticky lg:top-20 lg:h-[calc(100dvh-6rem)] ${mobileViewTab === 'editor' ? 'hidden lg:block' : ''}`}>
             <DevicePreview profile={profile} />
           </div>

@@ -1,5 +1,4 @@
 export const THEMES = [
-  // 1. Keep Clean Minimal unchanged
   {
     id: 'clean',
     name: 'Clean Minimal',
@@ -12,14 +11,8 @@ export const THEMES = [
     textMuted: 'text-zinc-500',
     accentColor: '#18181b',
     badgeBg: 'bg-zinc-100 text-zinc-800 border-zinc-200',
-    buttonBg: 'bg-zinc-900 text-white hover:bg-zinc-800',
-    secondaryButtonBg:
-      'bg-zinc-50 border border-zinc-200 text-zinc-800 hover:bg-zinc-100',
     previewGradient: 'from-zinc-100 to-zinc-200',
-    headerBadge: 'bg-zinc-100 text-zinc-700'
   },
-
-  // 2. Professional dark theme
   {
     id: 'midnight',
     name: 'Midnight',
@@ -32,14 +25,8 @@ export const THEMES = [
     textMuted: 'text-[#a1a7b3]',
     accentColor: '#a5b4fc',
     badgeBg: 'bg-[#292d38] text-[#d9defa] border-[#3b4050]',
-    buttonBg: 'bg-[#e5e7eb] text-[#18181b] hover:bg-white',
-    secondaryButtonBg:
-      'bg-[#252934] border border-white/10 text-[#e5e7eb] hover:bg-[#303541]',
     previewGradient: 'from-[#252936] via-[#171a22] to-[#0b0d12]',
-    headerBadge: 'bg-[#292d38] text-[#d9defa]'
   },
-
-  // 3. Sophisticated warm gradient
   {
     id: 'sunset',
     name: 'Terracotta',
@@ -52,14 +39,8 @@ export const THEMES = [
     textMuted: 'text-[#856b63]',
     accentColor: '#b85c46',
     badgeBg: 'bg-[#f5e6df] text-[#8e4535] border-[#e8c9bd]',
-    buttonBg: 'bg-[#a94f3b] text-white hover:bg-[#8f4030]',
-    secondaryButtonBg:
-      'bg-[#fffaf7] border border-[#e8d4cb] text-[#754638] hover:bg-[#f8ece6]',
     previewGradient: 'from-[#d7a18d] via-[#c17b68] to-[#895347]',
-    headerBadge: 'bg-[#f5e6df] text-[#8e4535]'
   },
-
-  // 4. Refined blue business theme
   {
     id: 'ocean',
     name: 'Navy Executive',
@@ -72,14 +53,8 @@ export const THEMES = [
     textMuted: 'text-[#a9b8cb]',
     accentColor: '#60a5fa',
     badgeBg: 'bg-[#233750] text-[#bfdbfe] border-[#385576]',
-    buttonBg: 'bg-[#60a5fa] text-[#0b1728] font-semibold hover:bg-[#93c5fd]',
-    secondaryButtonBg:
-      'bg-[#203149] border border-[#3b506a] text-[#e2e8f0] hover:bg-[#293e58]',
     previewGradient: 'from-[#416b9b] via-[#1e3a5f] to-[#101b2d]',
-    headerBadge: 'bg-[#233750] text-[#bfdbfe]'
   },
-
-  // 5. Keep Emerald Cyber unchanged
   {
     id: 'emerald',
     name: 'Emerald Cyber',
@@ -92,14 +67,8 @@ export const THEMES = [
     textMuted: 'text-emerald-400/70',
     accentColor: '#10b981',
     badgeBg: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/50',
-    buttonBg: 'bg-emerald-500 text-zinc-950 font-bold hover:bg-emerald-400',
-    secondaryButtonBg:
-      'bg-emerald-950/60 border border-emerald-800 text-emerald-200 hover:bg-emerald-900/50',
     previewGradient: 'from-emerald-950 via-emerald-800 to-teal-900',
-    headerBadge: 'bg-emerald-950 text-emerald-300'
   },
-
-  // 6. Premium muted purple
   {
     id: 'lavender',
     name: 'Soft Indigo',
@@ -112,14 +81,8 @@ export const THEMES = [
     textMuted: 'text-[#77728f]',
     accentColor: '#6558b5',
     badgeBg: 'bg-[#eeebfb] text-[#514394] border-[#dcd5f5]',
-    buttonBg: 'bg-[#55469e] text-white hover:bg-[#443681]',
-    secondaryButtonBg:
-      'bg-white border border-[#dedcf0] text-[#514394] hover:bg-[#f5f3ff]',
     previewGradient: 'from-[#c8c2ed] via-[#aaa5df] to-[#e0cfe9]',
-    headerBadge: 'bg-[#eeebfb] text-[#514394]'
   },
-
-  // 7. Premium neutral earth theme
   {
     id: 'latte',
     name: 'Linen & Espresso',
@@ -132,14 +95,9 @@ export const THEMES = [
     textMuted: 'text-[#817366]',
     accentColor: '#806044',
     badgeBg: 'bg-[#eee7dc] text-[#614a35] border-[#dfd2bf]',
-    buttonBg: 'bg-[#443326] text-white hover:bg-[#302319]',
-    secondaryButtonBg:
-      'bg-[#fffefa] border border-[#dfd2bf] text-[#443326] hover:bg-[#f2ece2]',
     previewGradient: 'from-[#e8ddcc] via-[#cbb79d] to-[#a58b70]',
-    headerBadge: 'bg-[#eee7dc] text-[#614a35]'
   },
   {
-    // 8. Premium midnight sapphire theme
     id: 'sapphire',
     name: 'Midnight Sapphire',
     description: 'Deep navy, icy blue and crisp whites with sapphire accents',
@@ -151,11 +109,7 @@ export const THEMES = [
     textMuted: 'text-[#7185a5]',
     accentColor: '#426bb0',
     badgeBg: 'bg-[#e5edfa] text-[#294c83] border-[#d0def4]',
-    buttonBg: 'bg-[#243e70] text-white hover:bg-[#192d50]',
-    secondaryButtonBg:
-      'bg-white border border-[#d8e2f1] text-[#294c83] hover:bg-[#f0f4fb]',
     previewGradient: 'from-[#c5d6f2] via-[#7396cf] to-[#243e70]',
-    headerBadge: 'bg-[#e5edfa] text-[#294c83]'
   },
 ];
 
@@ -167,20 +121,20 @@ export const COLOR_PRESETS = [
   { name: 'Sunset Rose', hex: '#f43f5e' },
   { name: 'Golden Amber', hex: '#f59e0b' },
   { name: 'Cyber Cyan', hex: '#06b6d4' },
-  { name: 'Warm Terracotta', hex: '#c2410c' }
+  { name: 'Warm Terracotta', hex: '#c2410c' },
 ];
 
 export const BUTTON_STYLES = [
   { id: 'pill', label: 'Full Pill', radius: 'rounded-full' },
   { id: 'rounded', label: 'Soft Rounded', radius: 'rounded-xl' },
   { id: 'square', label: 'Modern Square', radius: 'rounded-md' },
-  { id: 'outline', label: 'Clean Bordered', radius: 'rounded-xl border-2' }
+  { id: 'outline', label: 'Clean Bordered', radius: 'rounded-xl border-2' },
 ];
 
 export const FONT_STYLES = [
   { id: 'sans', label: 'Modern Sans', styleClass: 'font-sans' },
   { id: 'serif', label: 'Editorial Serif', styleClass: 'font-serif' },
-  { id: 'mono', label: 'Tech Monospace', styleClass: 'font-mono' }
+  { id: 'mono', label: 'Tech Monospace', styleClass: 'font-mono' },
 ];
 
 export const PLATFORMS = [
@@ -199,7 +153,7 @@ export const PLATFORMS = [
   { id: 'website', label: 'Portfolio Website', category: 'professional', placeholder: 'https://mysite.com', prefix: '' },
   { id: 'behance', label: 'Behance', category: 'design', placeholder: 'username', prefix: 'behance.net/' },
   { id: 'dribbble', label: 'Dribbble', category: 'design', placeholder: 'username', prefix: 'dribbble.com/' },
-  { id: 'facebook', label: 'Facebook', category: 'social', placeholder: 'username', prefix: 'facebook.com/' }
+  { id: 'facebook', label: 'Facebook', category: 'social', placeholder: 'username', prefix: 'facebook.com/' },
 ];
 
 export const EMPTY_PROFILE = {
@@ -218,48 +172,42 @@ export const EMPTY_PROFILE = {
     accentColor: THEMES[0].accentColor,
     buttonStyle: 'rounded',
     fontStyle: 'sans',
-    cardVariant: 'standard'
   },
   email: '',
   isPublic: true,
-  isAuthenticated: false
+  isAuthenticated: false,
 };
 
 const STORAGE_KEY = 'linkme_profile';
-const EVENT_NAME = 'linkme_profile_updated';
+export const EVENT_NAME = 'linkme_profile_updated';
 
-export function normalizeProfile(profile = {}) {
-  return {
-    ...EMPTY_PROFILE,
-    ...profile,
-    socials: { ...EMPTY_PROFILE.socials, ...(profile.socials || {}) },
-    theme: { ...EMPTY_PROFILE.theme, ...(profile.theme || {}) },
-    customLinks: Array.isArray(profile.customLinks) ? profile.customLinks : [],
-    photos: Array.isArray(profile.photos) ? profile.photos : [],
-    interests: Array.isArray(profile.interests) ? profile.interests : [],
-    achievements: Array.isArray(profile.achievements) ? profile.achievements : [],
-    isAuthenticated: Boolean(localStorage.getItem('linkme_token'))
-  };
-}
+export const normalizeProfile = (profile = {}) => ({
+  ...EMPTY_PROFILE,
+  ...profile,
+  socials: { ...EMPTY_PROFILE.socials, ...(profile.socials || {}) },
+  theme: { ...EMPTY_PROFILE.theme, ...(profile.theme || {}) },
+  customLinks: Array.isArray(profile.customLinks) ? profile.customLinks : [],
+  photos: Array.isArray(profile.photos) ? profile.photos : [],
+  interests: Array.isArray(profile.interests) ? profile.interests : [],
+  achievements: Array.isArray(profile.achievements) ? profile.achievements : [],
+  isAuthenticated: Boolean(localStorage.getItem('linkme_token')),
+});
 
-export function getStoredProfile() {
+export const getStoredProfile = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    const storedProfile = saved ? JSON.parse(saved) : {};
-    if (storedProfile.isAuthenticated && !localStorage.getItem('linkme_token')) {
-      return normalizeProfile();
-    }
-    return normalizeProfile(storedProfile);
+    const stored = saved ? JSON.parse(saved) : {};
+    return stored.isAuthenticated && !localStorage.getItem('linkme_token')
+      ? normalizeProfile()
+      : normalizeProfile(stored);
   } catch {
     return normalizeProfile();
   }
-}
+};
 
-export function saveStoredProfile(data) {
+export const saveStoredProfile = (data) => {
   const normalized = normalizeProfile(data);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
   window.dispatchEvent(new Event(EVENT_NAME));
   return normalized;
-}
-
-export { EVENT_NAME };
+};

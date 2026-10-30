@@ -1,18 +1,12 @@
 import axios from 'axios';
 
-const apiBaseUrl = (
-  import.meta.env.VITE_API_URL || 'https://linkme-backend-ceiv.onrender.com/api'
-).replace(/\/+$/, '');
-
 const api = axios.create({
-  baseURL: apiBaseUrl,
+  baseURL: (import.meta.env.VITE_API_URL),
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('linkme_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
@@ -28,8 +22,8 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      const isPublicEndpoint = error.config?.url?.includes('/profiles/') && !error.config?.url?.includes('/profiles/me');
-      if (!isPublicEndpoint) {
+      const isPublic = error.config?.url?.includes('/profiles/') && !error.config?.url?.includes('/profiles/me');
+      if (!isPublic) {
         localStorage.removeItem('linkme_token');
         localStorage.removeItem('linkme_profile');
         if (!['/login', '/register'].includes(window.location.pathname)) {
