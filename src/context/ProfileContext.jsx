@@ -61,7 +61,25 @@ export function ProfileProvider({ children }) {
       const profileData = Object.fromEntries(
         Object.entries(profile).filter(([k]) => !excluded.has(k))
       );
-      const { profile: saved } = await updateMyProfile(profileData);
+      // Older versions allowed free-form achievement years. Keep the achievement,
+      // but omit legacy values the API schema cannot accept (for example 8903).
+      if (Array.isArray(profileData.achievements)) {
+        profileData.achievements = profileData.achievements.map((achievement) => {
+          const year = Number(achievement.year);
+          if (achievement.year == null || achievement.year === '' || (Number.isInteger(year) && year >= 1900 && year <= 2200)) {
+            return achievement;
+          }
+          const { year: _invalidYear, ...validAchievement } = achievement;
+          return validAchievement;
+        });
+      }
+      let response;
+      try {
+        response = await updateMyProfile(profileData);
+      } catch (error) {
+        throw new Error(error.response?.data?.message || error.message || 'Could not save your profile.');
+      }
+      const { profile: saved } = response;
       const updated = normalizeProfile({ ...saved, email });
       commitProfile(updated);
       return updated;

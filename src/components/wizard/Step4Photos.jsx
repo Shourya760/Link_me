@@ -270,7 +270,10 @@ export default function Step4Photos({
             className="sm:col-span-8 px-3.5 py-2 text-xs rounded-xl border border-zinc-200 focus:outline-none focus:border-zinc-900"
           />
           <input
-            type="text"
+            type="number"
+            min="1900"
+            max="2200"
+            step="1"
             value={newAchYear}
             onChange={(e) => setNewAchYear(e.target.value)}
             placeholder="Year (2024)"

@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react';
+import { BookOpen, Calendar, Code, ExternalLink, LinkIcon, ShoppingBag, Sparkles } from 'lucide-react';
 import { FaBehance, FaDiscord, FaDribbble, FaEnvelope, FaFacebook, FaGithub, FaGlobe, FaInstagram, FaLinkedin, FaShareNodes, FaSpotify, FaTelegram, FaTiktok, FaTwitch, FaWhatsapp, FaXTwitter, FaYoutube } from 'react-icons/fa6';
 import { THEMES, BUTTON_STYLES, FONT_STYLES, PLATFORMS } from '../utils/storage';
 import { getPortfolioHost } from '../utils/portfolioUrl';
