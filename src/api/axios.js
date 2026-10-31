@@ -1,38 +1,38 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_URL),
+  baseURL: import.meta.env.VITE_API_URL || "/api",
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('linkme_token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const token = localStorage.getItem("linkme_token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
+
+// Handle expired or invalid token
 api.interceptors.response.use(
-  (response) => {
-    const profile = response.data?.profile;
-    if (profile) {
-      for (const field of ['customLinks', 'photos', 'achievements']) {
-        profile[field] = (profile[field] || []).map((item) => ({ ...item, id: item.id || item._id }));
-      }
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      const isPublic = error.config?.url?.includes('/profiles/') && !error.config?.url?.includes('/profiles/me');
-      if (!isPublic) {
-        localStorage.removeItem('linkme_token');
-        localStorage.removeItem('linkme_profile');
-        if (!['/login', '/register'].includes(window.location.pathname)) {
-          window.location.replace('/login');
-        }
-      }
+    const requestUrl = error.config?.url || '';
+    const isAuthenticationRequest = /^\/?auth\/(login|register)(?:\?|$)/.test(requestUrl);
+
+    if (error.response?.status === 401 && !isAuthenticationRequest) {
+
+      // Remove the expired token
+      localStorage.removeItem("linkme_token");
+      localStorage.removeItem("linkme_profile");
+      // Redirect to login
+      window.location.replace("/login");
     }
+
     return Promise.reject(error);
   }
 );
+
 
 export default api;

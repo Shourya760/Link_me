@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Upload, Plus, Trash2, Image as ImageIcon, Star } from 'lucide-react';
-import { uploadImage } from '../../services/userServices';
+import { uploadImage } from '../../Services/userServices';
 
 const SUGGESTED_INTERESTS = [
   'UI/UX Design', 'React & Vite', 'Typography', 'AI & Prompts', 'Productivity',

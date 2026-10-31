@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useProfile } from '../context/ProfileContext';
-import { registerUser as registerAccount } from '../services/userServices';
+import { useProfile } from '../Context/ProfileContext';
+import { registerUser as registerAccount } from '../Services/userServices';
 import { getPortfolioHost } from '../utils/portfolioUrl';
 
 export default function Register() {

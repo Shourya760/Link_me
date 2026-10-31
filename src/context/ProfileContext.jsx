@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getStoredProfile, saveStoredProfile, EMPTY_PROFILE, normalizeProfile, EVENT_NAME } from '../utils/storage';
-import { getMyProfile, updateMyProfile } from '../services/profileServices';
-import { logoutUser as logoutRequest } from '../services/userServices';
+import { getMyProfile, updateMyProfile } from '../Services/profileServices';
+import { logoutUser as logoutRequest } from '../Services/userServices';
 
 const ProfileContext = createContext(null);
 
@@ -22,7 +22,7 @@ export function ProfileProvider({ children }) {
         setProfile(next);
       })
       .catch((error) => {
-        if (!cancelled && error.status === 401) {
+        if (!cancelled && error.response?.status === 401) {
           localStorage.removeItem('linkme_token');
           setProfile(normalizeProfile(EMPTY_PROFILE));
         }
